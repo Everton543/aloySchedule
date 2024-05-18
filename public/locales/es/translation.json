@@ -1,3 +1,5 @@
 {
-    "welcome": "Bienvenido"
+    "welcome": "Bienvenido",
+    "aboutTitle": "Nosotros",
+    "notFoundTitle": "Página no encontrada"
 }

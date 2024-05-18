@@ -1,3 +1,11 @@
 {
-    "welcome": "Welcome"
+    "welcome": "Welcome",
+    "aboutTitle": "About Us",
+    "tagSelectClient": "Establishment",
+    "emptyOptionSelectClient": "Choose the establishment",
+    "tagUserInput": "User",
+    "tagPasswordInput": "Password",
+    "linkCreateEstablishmentAccount": "Create Establishment",
+    "btnCostumerAccess": "I'm a costumer",
+    "notFoundTitle": "Page not found"
 }

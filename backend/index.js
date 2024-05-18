@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const twilioRoutes = require('./routes/twilioRoutes');
+const clientsRoute = require('./routes/clientsRoute');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -21,6 +22,7 @@ mongoose.connect(process.env.MONGO_URI, {
 
 // Routes
 app.use('/api/twilio', twilioRoutes);
+app.use('/ajax/clients', clientsRoute);
 
 // Serve React App
 app.get('*', (req, res) => {

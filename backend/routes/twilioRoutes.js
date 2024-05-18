@@ -2,13 +2,14 @@ const express = require('express');
 const router = express.Router();
 const { sendMessage } = require('../modules/twilioModule');
 
-router.post('/sendWhatsApp', (req, res) => {
-    sendMessage(req.body)
-        .then(message => res.send(message))
-        .catch(err => {
-            console.error(err);
-            res.status(500).send('Failed to send message');
-        });
+router.post('/sendWhatsApp', async (req, res) => {
+    const { message, to } = req.body;
+    try {
+        const messageId = await sendMessage(message, to);
+        res.status(200).json({ message: 'Message sent successfully', messageId });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 module.exports = router;
