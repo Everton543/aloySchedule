@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const twilioRoutes = require('./routes/twilioRoutes');
+const zapiRoutes = require('./routes/zapiRoutes');
 const clientsRoute = require('./routes/clientsRoute');
 
 const app = express();
@@ -21,7 +22,8 @@ mongoose.connect(process.env.MONGO_URI, {
 .catch(err => console.log(err));
 
 // Routes
-app.use('/api/twilio', twilioRoutes);
+// app.use('/api/twilio', twilioRoutes);
+app.use('/api/zapi', zapiRoutes);
 app.use('/ajax/clients', clientsRoute);
 
 // Serve React App
