@@ -1,0 +1,4 @@
+.primary_button{
+    background-color: var(--primary-dark-color);
+    color: var(--light-font-color);
+}

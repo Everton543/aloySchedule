@@ -1,0 +1,16 @@
+.container{
+    max-width: 1000px;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.buttonContainer{
+    text-align: center;
+}
+
+.logo_container {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto
+}
