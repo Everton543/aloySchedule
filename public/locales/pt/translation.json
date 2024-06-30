@@ -1,5 +1,28 @@
 {
-    "welcome": "Bem vindo",
-    "aboutTitle": "Sobre nós",
-    "notFoundTitle": "Página não encontrada"
+    "welcome": "Bem-vindo",
+    "welcomeBody": "Bem-vindo ao aloySchedule! Nossa plataforma foi projetada para ajudar empresas a simplificar seu processo de agendamento de compromissos de forma eficiente. Com o aloySchedule, você pode:",
+    "welcomeList": [
+        "Crie e Gerencie Sua Conta: Configure sua conta empresarial de forma rápida e fácil.",
+        "Configure Seu Site de Agendamento Online: Personalize seu site de agendamento para atender às necessidades e à marca do seu negócio.",
+        "Agendamento Amigável para Clientes: Permita que seus clientes agendem compromissos online, de acordo com sua conveniência.",
+        "Notificações Automatizadas: Garanta que seus clientes recebam lembretes e notificações pontuais sobre seus compromissos."
+    ],
+    "welcomeFooter": "O aloySchedule é sua solução para um agendamento eficiente e organizado, melhorando tanto as operações do seu negócio quanto a satisfação do cliente. Junte-se a nós hoje e experimente a conveniência de um agendamento online sem complicações!",
+
+    "aboutTitle": "Sobre Nós",
+    "notFoundTitle": "Página não encontrada",
+    "createAccountTitle": "Primeiro, reivindique seu link único",
+    "createAccountSubTitle": "Os melhores ainda estão disponíveis!",
+
+    "tagSelectClient": "Estabelecimento",
+    "tagStoreLink": "seu-nome",
+    "tagUserInput": "Usuário",
+    "tagPasswordInput": "Senha",
+
+    "emptyOptionSelectClient": "Escolha o estabelecimento",
+
+    "linkCreateEstablishmentAccount": "Coloque Seu Negócio Online",
+    "btnLogin": "Entrar",
+    "btnGetLink": "Usar este link",
+    "btnCostumerAccess": "Sou um cliente"
 }

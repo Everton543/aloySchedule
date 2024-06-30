@@ -1,23 +1,50 @@
 import React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import './HomePage.module.css';
+import $ from 'jquery';
+import styles from './HomePage.module.css';
 import Logo from '../../components/Logo/Logo'; 
+import NavbarClient from '../../components/Navbar/NavbarClient'; 
 import PrimaryButton from '../../components/Button/PrimaryButton'; 
 import { Link } from 'react-router-dom';
-
+import FullCalendarComponent from '../../components/FullCalendarComponent/FullCalendarComponent';
 
 function HomePage() {
-    const { clientName } = useParams();
+    const { clientLink } = useParams();
     const { t, i18n} = useTranslation();
+    const [hasFetched, setHasFetched] = useState(false); 
+    const [dashboardOwner, setDashboardOwner] = useState(false); 
+    const [logedIn, setLogedIn] = useState(false); 
+    const [locale, setLocale] = useState(i18n.language); 
+
     useEffect(() => {
         const searchParams = new URLSearchParams(window.location.search);
         const lang = searchParams.get('lang');
         if (lang && i18n.language !== lang) {
             i18n.changeLanguage(lang);
+            setLocale(i18n.language);
         }
     }, [i18n]);
+
+    useEffect(() => {
+        if (clientLink != null && !hasFetched) {
+            setHasFetched(true);
+            $.ajax({
+                url: '/ajax/user/take-client-schedule',
+                method: 'GET',
+                data: { clientLink: clientLink },
+                success: function(response) {
+                    console.log(response);
+                    setDashboardOwner(response.dashboardOwner);
+                    setLogedIn(response.logedIn);
+                },
+                error: function(error) {
+                    console.error(error);
+                }
+            });
+        }
+    }, [clientLink, hasFetched]);
 
     const handleBussinessAccountClick = () => {
         window.location.assign('/create-bussiness-account');
@@ -25,9 +52,9 @@ function HomePage() {
 
     return (
         <main>
-            <Logo />
-            {!clientName ? (
+            {!clientLink ? (
                 <div>
+                    <Logo />
                     <div className="container">
                         <p>{t('welcomeBody')}</p>
                         <ul className="list-group list-group-flush">
@@ -37,7 +64,7 @@ function HomePage() {
                         </ul>
                         <p>{t('welcomeFooter')}</p>
                     </div>
-                    <div className="buttonContainer">
+                    <div className={styles.buttonContainer}>
                         <PrimaryButton onClick={handleBussinessAccountClick}>{t('linkCreateEstablishmentAccount')}</PrimaryButton>
                         <div>
                             <Link to="/login" className="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{t('btnLogin')}</Link>
@@ -45,7 +72,16 @@ function HomePage() {
                     </div>
                 </div>
             ) : (
-                <p>{clientName}</p>
+                dashboardOwner ? (
+                    <div>
+                        <NavbarClient></NavbarClient>
+                        <div id="dashboard-owner-content">
+                            <FullCalendarComponent clientLink={clientLink} locale={locale}/>
+                        </div>
+                    </div>
+                ) : (
+                    <p>{clientLink}</p>
+                )
             )}
         </main>
     );

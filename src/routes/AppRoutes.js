@@ -5,15 +5,18 @@ import AboutPage from '../pages/AboutPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import Login from '../pages/Login/Login';
 import CreateEstablishmentAccount from '../pages/CreateEstablishmentAccount/CreateEstablishmentAccount';
-
+import SignUp from '../pages/SignUp/SignUp';
+import ScheduleForm from '../pages/ScheduleForm/ScheduleForm';
 function AppRoutes() {
   return (
     <Router>
       <Routes>
-        <Route path="/:clientName?" element={<HomePage />} />
+        <Route path="/:clientLink?" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/create-bussiness-account" element={<CreateEstablishmentAccount />} />
-        <Route path="/login/:clientName?" element={<Login />} />
+        <Route path="/singup" element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
+        <Route path='/save-schedule' element={<ScheduleForm/>} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>

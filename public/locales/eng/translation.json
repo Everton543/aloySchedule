@@ -10,6 +10,8 @@
     "welcomeFooter": "aloySchedule is your go-to solution for efficient and organized scheduling, enhancing both your business operations and customer satisfaction. Join us today and experience the convenience of seamless online scheduling!",
 
     "aboutTitle": "About Us",
+    "signUpTitle": "Sign Up",
+    "loginTitle": "Log in",
     "notFoundTitle": "Page not found",
     "createAccountTitle": "First, claim your unique link",
     "createAccountSubTitle": "The good ones are still available!",
@@ -18,11 +20,24 @@
     "tagStoreLink": "your-name",
     "tagUserInput": "User",
     "tagPasswordInput": "Password",
+    "tagEmailInput": "Email",
 
     "emptyOptionSelectClient": "Choose the establishment",
 
     "linkCreateEstablishmentAccount": "Put Your Business Online",
     "btnLogin": "Log In",
-    "btnGetLink": "User this link",
-    "btnCostumerAccess": "I'm a costumer"
+    "btnSignUp": "Sign Up",
+    "btnGetLink": "Use this link",
+    "btnSchedule": "Schedule",
+    "btnCostumerAccess": "I'm a costumer",
+    "btnClientOpenServices": "My services",
+    "btnClientOpenWorkHours": "My work hours",
+    "btnClientOpenContacts": "My contact info",
+
+    "errorMsgEmailRequired" : "Email is required",
+    "errorMsgSystem" : "Sorry we got an error in the system, please report it.",
+    "errorMsgPasswordRequired" : "Password is required",
+    "errorMsgPermission" : "You don't have permission to do what you tried  to do.",
+    "errorMsgLogin" : "You must login to access this part of the website.",
+    "errorMsgInvalidPassword" : "Invalid Password"
 }

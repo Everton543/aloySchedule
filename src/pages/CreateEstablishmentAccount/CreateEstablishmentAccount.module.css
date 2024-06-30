@@ -1,0 +1,10 @@
+.primary_button{
+    width: 70%;
+}
+
+.buttonContainer{
+    display: grid;
+    align-items: center;
+    justify-items: start;
+    gap: 7px;
+}

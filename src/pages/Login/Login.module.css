@@ -1,0 +1,16 @@
+.logo_container {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto
+}
+
+.login_container {
+    max-width: 800px;
+    min-width: 240px;
+    width: 60%;
+    margin: 0 auto
+}
+
+.btnLogin{
+    min-width: 100px;
+}

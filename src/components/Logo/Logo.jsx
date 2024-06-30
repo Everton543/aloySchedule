@@ -1,21 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import './Logo.css';
+import classNames from 'classnames';
 
-const Logo = ({ logoSrc, backgroundSrc }) => {
+const Logo = ({ logoSrc, backgroundSrc, className}) => {
   const defaultLogoSrc = 'images/logo.png';
   const defaultBackgroundSrc = 'images/logo-background.png';
 
   return (
-    <div className="logo_container">
+    <div className={classNames('logo_container', className)}>
       <img 
         src={backgroundSrc || defaultBackgroundSrc} 
-        alt="Background Image" 
+        alt="Background" 
         className="logo_background" 
       />
       <img 
         src={logoSrc || defaultLogoSrc} 
-        alt="Logo Image" 
+        alt="Logo" 
         className="logo" 
       />
     </div>

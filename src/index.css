@@ -12,6 +12,12 @@ code {
     monospace;
 }
 
+.logo_container {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto
+}
+
 :root {
   --primary-light-color: #5A81FA;
   --primary-dark-color: #2B30BC;
