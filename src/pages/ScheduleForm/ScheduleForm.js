@@ -19,7 +19,6 @@ const ScheduleForm = () => {
     const [endTime, setEndTime] = useState('');
     const [serviceDuration, setServiceDuration] = useState('');
     const [loading, setLoading] = useState(true);
-    const [locale, setLocale] = useState(i18n.language);
     const [hasFetched, setHasFetched] = useState(false);
     const [clientLink, setClientLink] = useState('');
 
@@ -28,7 +27,6 @@ const ScheduleForm = () => {
         const lang = searchParams.get('lang');
         if (lang && i18n.language !== lang) {
             i18n.changeLanguage(lang);
-            setLocale(i18n.language);
         }
     }, [i18n]);
 
@@ -159,7 +157,7 @@ const ScheduleForm = () => {
     return (
         <div className="container mt-5">
             <NavbarClient clientLink={clientLink}></NavbarClient>
-            <h1 className="mb-4">Work Schedule</h1>
+            <h1 className="mb-4">{(id != null) ? t('editWorkHourTitle'): t('createWorkHourTitle')}</h1>
             <form id="scheduleForm" onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label className="form-label">{t('tagDaysOfWeek')}</label>
@@ -203,7 +201,6 @@ const ScheduleForm = () => {
                         type="number"
                         id="serviceDuration"
                         className="form-control"
-                        placeholder="Enter duration in minutes"
                         min="10"
                         value={serviceDuration}
                         onChange={e => setServiceDuration(e.target.value)}

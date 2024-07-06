@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useTranslation } from 'react-i18next';
@@ -50,7 +50,7 @@ function ScheduleCard ({ schedule }){
                 <p className="card-text">{t('tagServiceDuration')}: {serviceDuration} {t('tagMinutes')}</p>
             </div>
             <div className='card-footer'>
-                <a href={`/edit-work-hour/${_id}`}>
+                <a className="me-2" href={`/edit-work-hour/${_id}`}>
                     <PrimaryButton>{t('btnEditSchedule')}</PrimaryButton>
                 </a>
 

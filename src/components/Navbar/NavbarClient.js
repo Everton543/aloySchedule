@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Logo from '../Logo/Logo';
 import PrimaryButton from '../Button/PrimaryButton';
 import SecondaryButton from '../Button/SecondaryButton';
@@ -38,7 +38,7 @@ function NavbarClient({ clientLink }) {
                         <PrimaryButton className="nav-link"><a href='/list-work-hour'>{t('btnClientOpenWorkHours')}</a></PrimaryButton>
                     </li>
                     <li className={classNames("nav-item", styles.menuItems)}>
-                        <PrimaryButton className="nav-link" onClick={handleOpenServices}>{t('btnClientOpenServices')}</PrimaryButton>
+                        <PrimaryButton className="nav-link" onClick={handleOpenServices}><a href='/list-service'>{t('btnClientOpenServices')}</a></PrimaryButton>
                     </li>
                     <li className={classNames("nav-item", styles.menuItems)}>
                         <PrimaryButton className="nav-link">{t('btnClientOpenContacts')}</PrimaryButton>

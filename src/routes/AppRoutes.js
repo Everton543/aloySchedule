@@ -8,6 +8,9 @@ import CreateEstablishmentAccount from '../pages/CreateEstablishmentAccount/Crea
 import SignUp from '../pages/SignUp/SignUp';
 import ScheduleForm from '../pages/ScheduleForm/ScheduleForm';
 import ScheduleList from '../pages/ScheduleList/ScheduleList';
+import ServiceForm from '../pages/ServiceForm/ServiceForm';
+import ServiceList from '../pages/ServiceList/ServiceList';
+
 function AppRoutes() {
   return (
     <Router>
@@ -20,6 +23,9 @@ function AppRoutes() {
         <Route path='/save-work-hour' element={<ScheduleForm/>} />
         <Route path='/edit-work-hour/:id?' element={<ScheduleForm/>} />
         <Route path='/list-work-hour' element={<ScheduleList/>} />
+        <Route path='/list-service' element={<ServiceList/>} />
+        <Route path='/save-service' element={<ServiceForm/>} />
+        <Route path='/edit-service/:id' element={<ServiceForm/>} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>

@@ -17,7 +17,6 @@ import '@pnotify/mobile/dist/PNotifyMobile.css';
 const ScheduleList = () => {
     const { t, i18n} = useTranslation();
     const [loading, setLoading] = useState(true); 
-    const [locale, setLocale] = useState(i18n.language); 
     const [hasFetched, setHasFetched] = useState(false); 
     const [schedules, setSchedules] = useState([]);
     const [clientLink, setClientLink] = useState(''); 
@@ -30,7 +29,7 @@ const ScheduleList = () => {
             success: function(response) {
                 setSchedules(response);
                 setLoading(false);
-                if(alert != ''){
+                if(alert !== ''){
                     PNotifyAlert({
                         text: t(alert),
                         type: 'success'
@@ -51,7 +50,6 @@ const ScheduleList = () => {
         const lang = searchParams.get('lang');
         if (lang && i18n.language !== lang) {
             i18n.changeLanguage(lang);
-            setLocale(i18n.language);
         }
     }, [i18n]);
 

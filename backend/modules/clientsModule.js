@@ -26,9 +26,22 @@ scheduleSchema.pre('save', function(next) {
     next();
 });
 
+const serviceSchema = new mongoose.Schema({
+    client_id: { type: mongoose.Schema.Types.ObjectId, ref: 'client', required: true },
+    serviceName: { type: String, required: true },
+    servicePrice: { type: Number, required: false },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now }
+});
+
+serviceSchema.pre('save', function(next) {
+    this.updatedAt = Date.now();
+    next();
+});
 
 const Client = mongoose.model('Client', clientSchema);
 const Schedule = mongoose.model('Schedule', scheduleSchema);
+const Service = mongoose.model('Service', serviceSchema);
 
 const getClients = async () => {
     try {
@@ -97,6 +110,20 @@ const createSchedule = async (client_id, schedules) => {
     }
 };
 
+const createService = async (client_id, serviceName, servicePrice) => {
+    try {
+        const newService = {
+            client_id,
+            serviceName,
+            servicePrice
+        };
+        const createdService = await Service.insertMany(newService);
+        return createdService;
+    } catch (err) {
+        throw new Error(`errorMsgSystem`);
+    }
+};
+
 const getClientSchedule = async (client_id) => {
     try {
         const schedules = await Schedule.find({ client_id: client_id });
@@ -125,6 +152,50 @@ const getClientWorkHours = async (client_id, dayOfWeek) => {
     }
 };
 
+const checkServiceUniqueness  = async (_id, client_id, serviceName) => {
+    try {
+        let service = '';
+        if(_id === ''){
+            service = await Service.findOne({ client_id, serviceName});
+        }else{
+            service = await Service.findOne({ client_id, serviceName, _id: { $ne: _id } });
+        }
+        return !service;
+    } catch (err) {
+        throw new Error(`errorMsgSystem`);
+    }
+};
+
+const getServiceById = async (_id) => {
+    try {
+        const objectId = new mongoose.Types.ObjectId(_id);
+        const service = await Service.findOne({ _id: objectId });
+        return service;
+    } catch (err) {
+        throw new Error(`errorMsgSystem`);
+    }
+};
+
+const getClientServiceList = async (client_id) => {
+    try {
+        const services = await Service.find({client_id });
+        return services;
+    } catch (err) {
+        throw new Error(`errorMsgSystem`);
+    }
+};
+
+const updateService = async (_id, service) => {
+    try {
+        const objectId = new mongoose.Types.ObjectId(_id);
+
+        return await Service.updateOne({ _id: objectId }, { $set: service });
+
+    } catch (err) {
+        throw new Error(`errorMsgSystem`);
+    }
+};
+
 const updateWorkHour = async (_id, schedule) => {
     try {
         const objectId = new mongoose.Types.ObjectId(_id);
@@ -147,6 +218,17 @@ const deleteWorkHour = async (_id) => {
     }
 };
 
+const deleteService = async (_id) => {
+    try {
+        const objectId = new mongoose.Types.ObjectId(_id);
+
+        return await Service.deleteOne({ _id: objectId });
+
+    } catch (err) {
+        throw new Error(`errorMsgSystem`);
+    }
+};
+
 module.exports = {
     getClients,
     isClientLinkUnique,
@@ -158,5 +240,11 @@ module.exports = {
     getWorkHourById,
     getClientWorkHours,
     updateWorkHour,
-    deleteWorkHour
+    deleteWorkHour,
+    createService,
+    getClientServiceList,
+    checkServiceUniqueness,
+    updateService,
+    deleteService,
+    getServiceById
 };
