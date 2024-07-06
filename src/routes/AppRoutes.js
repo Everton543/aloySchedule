@@ -7,6 +7,7 @@ import Login from '../pages/Login/Login';
 import CreateEstablishmentAccount from '../pages/CreateEstablishmentAccount/CreateEstablishmentAccount';
 import SignUp from '../pages/SignUp/SignUp';
 import ScheduleForm from '../pages/ScheduleForm/ScheduleForm';
+import ScheduleList from '../pages/ScheduleList/ScheduleList';
 function AppRoutes() {
   return (
     <Router>
@@ -17,6 +18,8 @@ function AppRoutes() {
         <Route path="/singup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         <Route path='/save-schedule' element={<ScheduleForm/>} />
+        <Route path='/edit-schedule/:id?' element={<ScheduleForm/>} />
+        <Route path='/list-schedule' element={<ScheduleList/>} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>

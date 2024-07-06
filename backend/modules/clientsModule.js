@@ -35,7 +35,7 @@ const getClients = async () => {
         const clients = await Client.find({});
         return clients;
     } catch (err) {
-        throw new Error(`Unable to retrieve clients: ${err.message}`);
+        throw new Error(`errorMsgSystem`);
     }
 };
 
@@ -45,7 +45,7 @@ const getClientById = async (id) => {
         const client = await Client.findById(objectId);
         return client;
     } catch (err) {
-        throw new Error(`Unable to retrieve client: ${err.message}`);
+        throw new Error(`errorMsgSystem`);
     }
 };
 
@@ -55,7 +55,7 @@ const isClientLinkUnique = async (clientLink) => {
         const client = await Client.findOne({ clientLink });
         return client === null;
     } catch (err) {
-        throw new Error(`Unable to retrieve clients: ${err.message}`);
+        throw new Error(`errorMsgSystem`);
     }
 };
 
@@ -64,7 +64,7 @@ const getClientByLink = async (clientLink) => {
         const client = await Client.findOne({ clientLink });
         return client;
     } catch (err) {
-        throw new Error(`Unable to retrieve clients: ${err.message}`);
+        throw new Error(`errorMsgSystem`);
     }
 };
 
@@ -76,7 +76,7 @@ const createClient = async (clientLink, email, password, name) => {
         const acccountType = 'C';
         return await createUser(email, password, name, client_id, acccountType);
     } catch (err) {
-        throw new Error(`Unable to save clients: ${err.message}`);
+        throw new Error(`errorMsgSystem`);
     }
 };
 
@@ -93,7 +93,7 @@ const createSchedule = async (client_id, schedules) => {
         const createdSchedules = await Schedule.insertMany(newSchedules);
         return createdSchedules;
     } catch (err) {
-        throw new Error(`Unable to save schedules: ${err.message}`);
+        throw new Error(`errorMsgSystem`);
     }
 };
 
@@ -102,7 +102,48 @@ const getClientSchedule = async (client_id) => {
         const schedules = await Schedule.find({ client_id: client_id });
         return schedules;
     } catch (err) {
-        throw new Error(`Unable to find client schedules: ${err.message}`);
+        throw new Error(`errorMsgSystem`);
+    }
+};
+
+const getWorkHourById = async (id) => {
+    try {
+        const objectId = new mongoose.Types.ObjectId(id);
+        const schedule = await Schedule.findById(objectId);
+        return schedule;
+    } catch (err) {
+        throw new Error(`errorMsgSystem`);
+    }
+};
+
+const getClientWorkHours = async (client_id, dayOfWeek) => {
+    try {
+        const schedules = await Schedule.find({ client_id: client_id, dayOfWeek: dayOfWeek });
+        return schedules;
+    } catch (err) {
+        throw new Error(`errorMsgSystem`);
+    }
+};
+
+const updateWorkHour = async (_id, schedule) => {
+    try {
+        const objectId = new mongoose.Types.ObjectId(_id);
+
+        return await Schedule.updateOne({ _id: objectId }, { $set: schedule });
+
+    } catch (err) {
+        throw new Error(`errorMsgSystem`);
+    }
+};
+
+const deleteWorkHour = async (_id) => {
+    try {
+        const objectId = new mongoose.Types.ObjectId(_id);
+
+        return await Schedule.deleteOne({ _id: objectId });
+
+    } catch (err) {
+        throw new Error(`errorMsgSystem`);
     }
 };
 
@@ -113,5 +154,9 @@ module.exports = {
     getClientById,
     getClientByLink,
     createSchedule,
-    getClientSchedule
+    getClientSchedule,
+    getWorkHourById,
+    getClientWorkHours,
+    updateWorkHour,
+    deleteWorkHour
 };

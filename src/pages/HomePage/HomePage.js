@@ -9,6 +9,10 @@ import NavbarClient from '../../components/Navbar/NavbarClient';
 import PrimaryButton from '../../components/Button/PrimaryButton'; 
 import { Link } from 'react-router-dom';
 import FullCalendarComponent from '../../components/FullCalendarComponent/FullCalendarComponent';
+import { alert as PNotifyAlert } from '@pnotify/core';
+import '@pnotify/core/dist/PNotify.css';
+import '@pnotify/core/dist/BrightTheme.css';
+import '@pnotify/mobile/dist/PNotifyMobile.css';
 
 function HomePage() {
     const { clientLink } = useParams();
@@ -35,12 +39,14 @@ function HomePage() {
                 method: 'GET',
                 data: { clientLink: clientLink },
                 success: function(response) {
-                    console.log(response);
                     setDashboardOwner(response.dashboardOwner);
                     setLogedIn(response.logedIn);
                 },
                 error: function(error) {
-                    console.error(error);
+                    PNotifyAlert({
+                        text: t(error.responseJSON.message || 'errorMsgSystem'),
+                        type: 'error'
+                    });
                 }
             });
         }
@@ -74,7 +80,7 @@ function HomePage() {
             ) : (
                 dashboardOwner ? (
                     <div>
-                        <NavbarClient></NavbarClient>
+                        <NavbarClient clientLink={clientLink}></NavbarClient>
                         <div id="dashboard-owner-content">
                             <FullCalendarComponent clientLink={clientLink} locale={locale}/>
                         </div>

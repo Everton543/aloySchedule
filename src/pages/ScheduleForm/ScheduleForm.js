@@ -1,48 +1,146 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import $ from 'jquery';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useTranslation } from 'react-i18next';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import NavbarClient from '../../components/Navbar/NavbarClient'; 
+import LoadingSpinner from '../../components/LoadingSpinner';
+import { alert as PNotifyAlert } from '@pnotify/core';
+import '@pnotify/core/dist/PNotify.css';
+import '@pnotify/core/dist/BrightTheme.css';
+import '@pnotify/mobile/dist/PNotifyMobile.css';
 
-const ScheduleForm = ({ clientId }) => {
+const ScheduleForm = () => {
+    const { id } = useParams();
+    const { t, i18n } = useTranslation();
     const [selectedDays, setSelectedDays] = useState([]);
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
     const [serviceDuration, setServiceDuration] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [locale, setLocale] = useState(i18n.language);
+    const [hasFetched, setHasFetched] = useState(false);
+    const [clientLink, setClientLink] = useState('');
+
+    useEffect(() => {
+        const searchParams = new URLSearchParams(window.location.search);
+        const lang = searchParams.get('lang');
+        if (lang && i18n.language !== lang) {
+            i18n.changeLanguage(lang);
+            setLocale(i18n.language);
+        }
+    }, [i18n]);
+
+    useEffect(() => {
+        if (!hasFetched) {
+            setHasFetched(true);
+            $.ajax({
+                url: '/ajax/user/get-logged-user-info',
+                method: 'GET',
+                success: function(response) {
+                    setClientLink(response.clientLink);
+                    if (!id) {
+                        setLoading(false);
+                    }
+                },
+                error: function(error) {
+                    PNotifyAlert({
+                        text: t(error.responseJSON.message || 'errorMsgSystem'),
+                        type: 'error'
+                    });
+                }
+            });
+            if (id) {
+                $.ajax({
+                    url: '/ajax/clients/get-work-hour-by-id',
+                    method: 'GET',
+                    data: { "_id": id },
+                    success: function(response) {
+                        setSelectedDays([response.dayOfWeek]);
+                        setStartTime(response.startTime);
+                        setEndTime(response.endTime);
+                        setServiceDuration(response.serviceDuration);
+                        setLoading(false);
+                    },
+                    error: function(error) {
+                        PNotifyAlert({
+                            text: t(error.responseJSON.message || 'errorMsgSystem'),
+                            type: 'error'
+                        });
+                    }
+                });
+            }
+        }
+    }, [loading, hasFetched, id]);
+
 
     const handleCheckboxChange = (event) => {
         const value = event.target.value;
-        setSelectedDays(prevState =>
-            prevState.includes(value)
-                ? prevState.filter(day => day !== value)
-                : [...prevState, value]
-        );
+        if (id) {
+            setSelectedDays([value]);
+        } else {
+            setSelectedDays(prevState =>
+                prevState.includes(value)
+                    ? prevState.filter(day => day !== value)
+                    : [...prevState, value]
+            );
+        }
     };
 
     const handleSubmit = (event) => {
         event.preventDefault();
-
-        const schedules = selectedDays.map(day => ({
-            dayOfWeek: day,
-            startTime,
-            endTime,
-            serviceDuration
-        }));
-
-        $.ajax({
-            url: '/ajax/clients/save-schedule',
-            method: 'POST',
-            data: JSON.stringify({
-                schedules
-            }),
-            contentType: 'application/json',
-            success: (data) => {
-                console.log('Schedules saved:', data);
-            },
-            error: (error) => {
-                console.error('Error saving schedules:', error);
-            }
-        });
+        if(id == null){
+            const schedules = selectedDays.map(day => ({
+                dayOfWeek: day,
+                startTime,
+                endTime,
+                serviceDuration
+            }));
+    
+            $.ajax({
+                url: '/ajax/clients/save-schedule',
+                method: 'POST',
+                data: JSON.stringify({
+                    schedules
+                }),
+                contentType: 'application/json',
+                success: (data) => {
+                    window.location.href = "/list-schedule";
+                },
+                error: (error) => {
+                    PNotifyAlert({
+                        text: t(error.responseJSON.message || 'errorMsgSystem'),
+                        type: 'error'
+                    });
+                }
+            });
+        }else{
+            const schedule = {
+                dayOfWeek: selectedDays[0],
+                startTime,
+                endTime,
+                serviceDuration
+            };
+            $.ajax({
+                url: '/ajax/clients/edit-work-hour',
+                method: 'POST',
+                data: JSON.stringify({
+                    _id: id,
+                    schedule
+                }),
+                contentType: 'application/json',
+                success: (data) => {
+                    window.location.href = "/list-schedule";
+                },
+                error: (error) => {
+                    PNotifyAlert({
+                        text: t(error.responseJSON.message || 'errorMsgSystem'),
+                        type: 'error'
+                    });
+                }
+            });
+        }
     };
 
     const timeOptions = [];
@@ -54,9 +152,13 @@ const ScheduleForm = ({ clientId }) => {
         }
     }
 
+    if (loading) {
+        return <LoadingSpinner></LoadingSpinner>;
+    }
+
     return (
         <div className="container mt-5">
-            <NavbarClient></NavbarClient>
+            <NavbarClient clientLink={clientLink}></NavbarClient>
             <h1 className="mb-4">Work Schedule</h1>
             <form id="scheduleForm" onSubmit={handleSubmit}>
                 <div className="mb-3">
@@ -71,6 +173,7 @@ const ScheduleForm = ({ clientId }) => {
                                         value={day}
                                         className="form-check-input"
                                         onChange={handleCheckboxChange}
+                                        checked={selectedDays.includes(day)}
                                     />
                                     <label htmlFor={day} className="form-check-label">{day.charAt(0).toUpperCase() + day.slice(1)}</label>
                                 </div>

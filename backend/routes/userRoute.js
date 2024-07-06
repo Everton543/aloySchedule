@@ -66,4 +66,21 @@ router.get('/take-client-schedule', async (req, res) => {
     }
 });
 
+router.get('/get-logged-user-info', async (req, res) => {
+    if (!req.session.user) {
+        return res.status(500).json({ message: 'errorMsgLogin' });
+    } else {
+        let result = { ...req.session.user };
+
+        if (req.session.alert) {
+            result.alert = req.session.alert;
+            req.session.alert = null;
+            res.json(result);
+        } else {
+            req.session.alert = null;
+            req.session.user.alert = null;
+            res.json(result);
+        }
+    }
+});
 module.exports = router;

@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import classNames from 'classnames';
 import $ from 'jquery';
 
-function NavbarClient() {
+function NavbarClient({ clientLink }) {
     const { t, i18n} = useTranslation();
     useEffect(() => {
         const searchParams = new URLSearchParams(window.location.search);
@@ -30,18 +30,15 @@ function NavbarClient() {
     return (
         <nav className="navbar navbar-expand-lg bg-body-tertiary">
             <div className="container">
-                <a className="navbar-brand" href="#">
+                <a className="navbar-brand" href={'/'+clientLink}>
                     <Logo className={styles.menuLogo}></Logo>
                 </a>
                 <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                     <li className={classNames("nav-item", styles.menuItems)}>
-                        <PrimaryButton className="nav-link"><a href='/save-schedule'>{t('btnSchedule')}</a></PrimaryButton>
+                        <PrimaryButton className="nav-link"><a href='/list-schedule'>{t('btnClientOpenWorkHours')}</a></PrimaryButton>
                     </li>
                     <li className={classNames("nav-item", styles.menuItems)}>
                         <PrimaryButton className="nav-link" onClick={handleOpenServices}>{t('btnClientOpenServices')}</PrimaryButton>
-                    </li>
-                    <li className={classNames("nav-item", styles.menuItems)}>
-                        <PrimaryButton className="nav-link">{t('btnClientOpenWorkHours')}</PrimaryButton>
                     </li>
                     <li className={classNames("nav-item", styles.menuItems)}>
                         <PrimaryButton className="nav-link">{t('btnClientOpenContacts')}</PrimaryButton>
