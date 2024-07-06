@@ -106,7 +106,7 @@ const ScheduleForm = () => {
                 }),
                 contentType: 'application/json',
                 success: (data) => {
-                    window.location.href = "/list-schedule";
+                    window.location.href = "/list-work-hour";
                 },
                 error: (error) => {
                     PNotifyAlert({
@@ -131,7 +131,7 @@ const ScheduleForm = () => {
                 }),
                 contentType: 'application/json',
                 success: (data) => {
-                    window.location.href = "/list-schedule";
+                    window.location.href = "/list-work-hour";
                 },
                 error: (error) => {
                     PNotifyAlert({
@@ -162,7 +162,7 @@ const ScheduleForm = () => {
             <h1 className="mb-4">Work Schedule</h1>
             <form id="scheduleForm" onSubmit={handleSubmit}>
                 <div className="mb-3">
-                    <label className="form-label">Days of the Week</label>
+                    <label className="form-label">{t('tagDaysOfWeek')}</label>
                     <div id="daysOfWeek" className="row">
                         {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => (
                             <div className="col-md-4" key={day}>
@@ -182,7 +182,7 @@ const ScheduleForm = () => {
                     </div>
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="startTime" className="form-label">Start Time</label>
+                    <label htmlFor="startTime" className="form-label">{t('tagStartTime')}</label>
                     <select id="startTime" className="form-select" value={startTime} onChange={e => setStartTime(e.target.value)}>
                         {timeOptions.map(time => (
                             <option key={time} value={time}>{time}</option>
@@ -190,7 +190,7 @@ const ScheduleForm = () => {
                     </select>
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="endTime" className="form-label">End Time</label>
+                    <label htmlFor="endTime" className="form-label">{t('tagEndTime')}</label>
                     <select id="endTime" className="form-select" value={endTime} onChange={e => setEndTime(e.target.value)}>
                         {timeOptions.map(time => (
                             <option key={time} value={time}>{time}</option>
@@ -198,7 +198,7 @@ const ScheduleForm = () => {
                     </select>
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="serviceDuration" className="form-label">Service Duration (in minutes)</label>
+                    <label htmlFor="serviceDuration" className="form-label">{t('tagServiceDuration')}</label>
                     <input
                         type="number"
                         id="serviceDuration"
@@ -209,7 +209,7 @@ const ScheduleForm = () => {
                         onChange={e => setServiceDuration(e.target.value)}
                     />
                 </div>
-                <button type="submit" className="btn btn-primary">Save Schedule</button>
+                <button type="submit" className="btn btn-primary">{t('btnConfirm')}</button>
             </form>
         </div>
     );

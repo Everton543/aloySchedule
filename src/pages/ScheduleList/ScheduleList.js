@@ -88,7 +88,7 @@ const ScheduleList = () => {
             <NavbarClient clientLink={clientLink}></NavbarClient>
             <header className='d-flex mb-4 justify-content-between align-items-center p-3 border-bottom'>
                 <h1 className="m-0">{t('workHoursTitle')}</h1>
-                <a href='/save-schedule'><PrimaryButton>{t('btnClientAddWorkHours')}</PrimaryButton></a>
+                <a href='/save-work-hour'><PrimaryButton>{t('btnClientAddWorkHours')}</PrimaryButton></a>
             </header>
             <div className={classNames("container", style.scheduleCardsListContainer)}>
                 {schedules.map(schedule => (

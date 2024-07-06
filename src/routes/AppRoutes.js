@@ -17,9 +17,9 @@ function AppRoutes() {
         <Route path="/create-bussiness-account" element={<CreateEstablishmentAccount />} />
         <Route path="/singup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
-        <Route path='/save-schedule' element={<ScheduleForm/>} />
-        <Route path='/edit-schedule/:id?' element={<ScheduleForm/>} />
-        <Route path='/list-schedule' element={<ScheduleList/>} />
+        <Route path='/save-work-hour' element={<ScheduleForm/>} />
+        <Route path='/edit-work-hour/:id?' element={<ScheduleForm/>} />
+        <Route path='/list-work-hour' element={<ScheduleList/>} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>

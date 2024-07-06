@@ -50,7 +50,7 @@ function ScheduleCard ({ schedule }){
                 <p className="card-text">{t('tagServiceDuration')}: {serviceDuration} {t('tagMinutes')}</p>
             </div>
             <div className='card-footer'>
-                <a href={`/edit-schedule/${_id}`}>
+                <a href={`/edit-work-hour/${_id}`}>
                     <PrimaryButton>{t('btnEditSchedule')}</PrimaryButton>
                 </a>
 

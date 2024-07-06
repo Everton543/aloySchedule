@@ -35,7 +35,7 @@ function NavbarClient({ clientLink }) {
                 </a>
                 <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                     <li className={classNames("nav-item", styles.menuItems)}>
-                        <PrimaryButton className="nav-link"><a href='/list-schedule'>{t('btnClientOpenWorkHours')}</a></PrimaryButton>
+                        <PrimaryButton className="nav-link"><a href='/list-work-hour'>{t('btnClientOpenWorkHours')}</a></PrimaryButton>
                     </li>
                     <li className={classNames("nav-item", styles.menuItems)}>
                         <PrimaryButton className="nav-link" onClick={handleOpenServices}>{t('btnClientOpenServices')}</PrimaryButton>
