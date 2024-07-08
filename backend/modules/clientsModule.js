@@ -11,17 +11,27 @@ const clientSchema = new mongoose.Schema({
     },
 });
 
-const scheduleSchema = new mongoose.Schema({
+const workHourSchema = new mongoose.Schema({
     client_id: { type: mongoose.Schema.Types.ObjectId, ref: 'client', required: true },
     dayOfWeek: { type: String, required: true, enum: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] },
-    startTime: { type: String, required: true }, // Store time in HH:mm format
-    endTime: { type: String, required: true }, // Store time in HH:mm format
+    startTime: { type: String, required: true, validate: {
+        validator: function(v) {
+            return /^([01]\d|2[0-3]):([0-5]\d)$/.test(v);
+        },
+        message: props => `${props.value} is not a valid time!`
+    }}, // Store time in HH:mm format
+    endTime: { type: String, required: true, validate: {
+        validator: function(v) {
+            return /^([01]\d|2[0-3]):([0-5]\d)$/.test(v);
+        },
+        message: props => `${props.value} is not a valid time!`
+    }}, // Store time in HH:mm format
     serviceDuration: { type: Number, required: true, min: 10 },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
-});
+}, { collection: 'workHours' });
 
-scheduleSchema.pre('save', function(next) {
+workHourSchema.pre('save', function(next) {
     this.updatedAt = Date.now();
     next();
 });
@@ -40,7 +50,7 @@ serviceSchema.pre('save', function(next) {
 });
 
 const Client = mongoose.model('Client', clientSchema);
-const Schedule = mongoose.model('Schedule', scheduleSchema);
+const WorkHour = mongoose.model('WorkHour', workHourSchema);
 const Service = mongoose.model('Service', serviceSchema);
 
 const getClients = async () => {
@@ -93,9 +103,9 @@ const createClient = async (clientLink, email, password, name) => {
     }
 };
 
-const createSchedule = async (client_id, schedules) => {
+const createWorkHour = async (client_id, workHour) => {
     try {
-        const newSchedules = schedules.map(schedule => ({
+        const newSchedules = workHour.map(schedule => ({
             client_id: new mongoose.Types.ObjectId(client_id),
             dayOfWeek: schedule.dayOfWeek,
             startTime: schedule.startTime,
@@ -103,9 +113,10 @@ const createSchedule = async (client_id, schedules) => {
             serviceDuration: schedule.serviceDuration
         }));
 
-        const createdSchedules = await Schedule.insertMany(newSchedules);
+        const createdSchedules = await WorkHour.insertMany(newSchedules);
         return createdSchedules;
     } catch (err) {
+        console.log(err);
         throw new Error(`errorMsgSystem`);
     }
 };
@@ -124,10 +135,10 @@ const createService = async (client_id, serviceName, servicePrice) => {
     }
 };
 
-const getClientSchedule = async (client_id) => {
+const getClientWorkHour = async (client_id) => {
     try {
-        const schedules = await Schedule.find({ client_id: client_id });
-        return schedules;
+        const workHour = await WorkHour.find({ client_id: client_id });
+        return workHour;
     } catch (err) {
         throw new Error(`errorMsgSystem`);
     }
@@ -136,7 +147,7 @@ const getClientSchedule = async (client_id) => {
 const getWorkHourById = async (id) => {
     try {
         const objectId = new mongoose.Types.ObjectId(id);
-        const schedule = await Schedule.findById(objectId);
+        const schedule = await WorkHour.findById(objectId);
         return schedule;
     } catch (err) {
         throw new Error(`errorMsgSystem`);
@@ -145,8 +156,8 @@ const getWorkHourById = async (id) => {
 
 const getClientWorkHours = async (client_id, dayOfWeek) => {
     try {
-        const schedules = await Schedule.find({ client_id: client_id, dayOfWeek: dayOfWeek });
-        return schedules;
+        const workHour = await WorkHour.find({ client_id: client_id, dayOfWeek: dayOfWeek });
+        return workHour;
     } catch (err) {
         throw new Error(`errorMsgSystem`);
     }
@@ -200,7 +211,7 @@ const updateWorkHour = async (_id, schedule) => {
     try {
         const objectId = new mongoose.Types.ObjectId(_id);
 
-        return await Schedule.updateOne({ _id: objectId }, { $set: schedule });
+        return await WorkHour.updateOne({ _id: objectId }, { $set: schedule });
 
     } catch (err) {
         throw new Error(`errorMsgSystem`);
@@ -211,7 +222,7 @@ const deleteWorkHour = async (_id) => {
     try {
         const objectId = new mongoose.Types.ObjectId(_id);
 
-        return await Schedule.deleteOne({ _id: objectId });
+        return await WorkHour.deleteOne({ _id: objectId });
 
     } catch (err) {
         throw new Error(`errorMsgSystem`);
@@ -235,8 +246,8 @@ module.exports = {
     createClient,
     getClientById,
     getClientByLink,
-    createSchedule,
-    getClientSchedule,
+    createWorkHour,
+    getClientWorkHour,
     getWorkHourById,
     getClientWorkHours,
     updateWorkHour,

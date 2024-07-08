@@ -20,6 +20,7 @@ function HomePage() {
     const [hasFetched, setHasFetched] = useState(false); 
     const [dashboardOwner, setDashboardOwner] = useState(false); 
     const [logedIn, setLogedIn] = useState(false); 
+    const [services, setServices] = useState([]); 
     const [locale, setLocale] = useState(i18n.language); 
 
     useEffect(() => {
@@ -41,6 +42,7 @@ function HomePage() {
                 success: function(response) {
                     setDashboardOwner(response.dashboardOwner);
                     setLogedIn(response.logedIn);
+                    setServices(response.services);
                 },
                 error: function(error) {
                     PNotifyAlert({
@@ -82,7 +84,7 @@ function HomePage() {
                     <div>
                         <NavbarClient clientLink={clientLink}></NavbarClient>
                         <div id="dashboard-owner-content">
-                            <FullCalendarComponent clientLink={clientLink} locale={locale}/>
+                            <FullCalendarComponent clientLink={clientLink} locale={locale} services={services}/>
                         </div>
                     </div>
                 ) : (

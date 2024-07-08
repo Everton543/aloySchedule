@@ -11,7 +11,7 @@ import '@pnotify/core/dist/PNotify.css';
 import '@pnotify/core/dist/BrightTheme.css';
 import '@pnotify/mobile/dist/PNotifyMobile.css';
 
-const ScheduleForm = () => {
+const WorkHourForm = () => {
     const { id } = useParams();
     const { t, i18n } = useTranslation();
     const [selectedDays, setSelectedDays] = useState([]);
@@ -89,7 +89,7 @@ const ScheduleForm = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
         if(id == null){
-            const schedules = selectedDays.map(day => ({
+            const workHours = selectedDays.map(day => ({
                 dayOfWeek: day,
                 startTime,
                 endTime,
@@ -97,10 +97,10 @@ const ScheduleForm = () => {
             }));
     
             $.ajax({
-                url: '/ajax/clients/save-schedule',
+                url: '/ajax/clients/save-workHour',
                 method: 'POST',
                 data: JSON.stringify({
-                    schedules
+                    workHours
                 }),
                 contentType: 'application/json',
                 success: (data) => {
@@ -114,7 +114,7 @@ const ScheduleForm = () => {
                 }
             });
         }else{
-            const schedule = {
+            const workHour = {
                 dayOfWeek: selectedDays[0],
                 startTime,
                 endTime,
@@ -125,7 +125,7 @@ const ScheduleForm = () => {
                 method: 'POST',
                 data: JSON.stringify({
                     _id: id,
-                    schedule
+                    workHour
                 }),
                 contentType: 'application/json',
                 success: (data) => {
@@ -212,4 +212,4 @@ const ScheduleForm = () => {
     );
 };
 
-export default ScheduleForm;
+export default WorkHourForm;

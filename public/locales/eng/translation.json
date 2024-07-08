@@ -36,6 +36,9 @@
     "tagServiceName": "Service name",
     "tagServicePrice": "Service price",
     "tagOptions": "Options",
+    "tagMoneyicon": "$",
+    "tagVacant": "Add Schedule",
+    "tagNotVacant": "No Vacancy",
 
     "emptyOptionSelectClient": "Choose the establishment",
 
@@ -47,6 +50,7 @@
     "btnGetLink": "Use this link",
     "btnSchedule": "Schedule",
     "btnEditSchedule": "Edit Schedule",
+    "btnEditWorkHour": "Edit Work Hour",
     "btnCostumerAccess": "I'm a costumer",
     "btnClientOpenServices": "My services",
     "btnClientOpenWorkHours": "My work hours",
@@ -58,6 +62,7 @@
     "alertWorkHourCreatedSuccessfully" : "Work hour created successfully.",
     "alertWorkHourUpdatedSuccessfully" : "Work hour updated successfully.",
     "alertServiceCreatedSuccessfully" : "Service created successfully.",
+    "alertScheduleCreatedSuccessfully" : "Schedule saved successfully.",
     "alertServiceUpdatedSuccessfully" : "Service updated successfully.",
     "alertWorkHourDeleteSuccessfully" : "Work hour deleted successfully.",
     "alertServiceDeleteSuccessfully" : "Service deleted successfully.",

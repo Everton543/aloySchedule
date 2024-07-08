@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getClients, isClientLinkUnique, createClient, getClientById, createSchedule, getClientSchedule, getClientByLink, getWorkHourById, getClientWorkHours, updateWorkHour, deleteWorkHour, createService, getClientServiceList, checkServiceUniqueness, updateService, deleteService, getServiceById} = require('../modules/clientsModule');
+const { getClients, isClientLinkUnique, createClient, getClientById, createWorkHour, getClientWorkHour, getClientByLink, getWorkHourById, getClientWorkHours, updateWorkHour, deleteWorkHour, createService, getClientServiceList, checkServiceUniqueness, updateService, deleteService, getServiceById} = require('../modules/clientsModule');
 
 router.get('/', async (req, res) => {
     try {
@@ -57,7 +57,7 @@ router.post('/create-account', async (req, res) => {
     }
 });
 
-router.post('/save-schedule', async (req, res) => {
+router.post('/save-workHour', async (req, res) => {
     let client_id = '';
     let accountType = '';
     if (req.session && req.session.user) {
@@ -73,19 +73,19 @@ router.post('/save-schedule', async (req, res) => {
         return res.status(401).json({ message: 'errorMsgLogin' });
     }
 
-    const { schedules } = req.body;
+    const { workHours } = req.body;
 
     try {
-        const newSchedules = schedules.map(schedule => ({
+        const newWorkHours = workHours.map(workHour => ({
             client_id,
-            dayOfWeek: schedule.dayOfWeek,
-            startTime: schedule.startTime,
-            endTime: schedule.endTime,
-            serviceDuration: schedule.serviceDuration
+            dayOfWeek: workHour.dayOfWeek,
+            startTime: workHour.startTime,
+            endTime: workHour.endTime,
+            serviceDuration: workHour.serviceDuration
         }));
 
-        const createdSchedules = await createSchedule(client_id, newSchedules);
-        res.status(201).json(createdSchedules);
+        const createdWorkHours = await createWorkHour(client_id, newWorkHours);
+        res.status(201).json(createdWorkHours);
     } catch (err) {
         res.status(500).json({ message: err.message || 'errorMsgSystem' });
     }
@@ -121,24 +121,12 @@ router.post('/save-service', async (req, res) => {
     }
 });
 
-router.get('/get-schedule', async (req, res) => {
-    const { clientLink } = req.query;
-    
-    try {
-        const client = await getClientByLink(clientLink);
-        let schedules = await getClientSchedule(client._id);
-        res.json(schedules);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-});
-
 router.get('/get-work-hours', async (req, res) => {
     const { clientLink } = req.query;
     try {
         const client = await getClientByLink(clientLink);
-        let schedules = await getClientSchedule(client._id);
-        res.json(schedules);
+        let workHour = await getClientWorkHour(client._id);
+        res.json(workHour);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -170,8 +158,8 @@ router.get('/get-services-list', async (req, res) => {
 router.get('/get-work-hour-by-id', async (req, res) => {
     const { _id } = req.query;
     try {
-        let schedules = await getWorkHourById(_id);
-        res.json(schedules);
+        let workHour = await getWorkHourById(_id);
+        res.json(workHour);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -180,8 +168,8 @@ router.get('/get-work-hour-by-id', async (req, res) => {
 router.get('/get-service-by-id', async (req, res) => {
     const { _id } = req.query;
     try {
-        let schedules = await getServiceById(_id);
-        res.json(schedules);
+        let workHour = await getServiceById(_id);
+        res.json(workHour);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -202,16 +190,16 @@ router.post('/edit-work-hour', async (req, res) => {
     if (!clientId) {
         return res.status(401).json({ message: 'errorMsgLogin' });
     }
-    const { schedule, _id } = req.body;
+    const { workHour, _id } = req.body;
     try {
-        let doesHaveScheduleOnThisDay = await getClientWorkHours(clientId, schedule.dayOfWeek);
+        let doesHaveWorkHourOnThisDay = await getClientWorkHours(clientId, workHour.dayOfWeek);
         
-        for (const existingSchedule of doesHaveScheduleOnThisDay) {
-            if (existingSchedule._id.toString() !== _id) {
-                const existingStartTime = new Date(`1970-01-01T${existingSchedule.startTime}:00`);
-                const existingEndTime = new Date(`1970-01-01T${existingSchedule.endTime}:00`);
-                const newStartTime = new Date(`1970-01-01T${schedule.startTime}:00`);
-                const newEndTime = new Date(`1970-01-01T${schedule.endTime}:00`);
+        for (const existingWorkHour of doesHaveWorkHourOnThisDay) {
+            if (existingWorkHour._id.toString() !== _id) {
+                const existingStartTime = new Date(`1970-01-01T${existingWorkHour.startTime}:00`);
+                const existingEndTime = new Date(`1970-01-01T${existingWorkHour.endTime}:00`);
+                const newStartTime = new Date(`1970-01-01T${workHour.startTime}:00`);
+                const newEndTime = new Date(`1970-01-01T${workHour.endTime}:00`);
 
                 if ((newStartTime < existingEndTime && newEndTime > existingStartTime)) {
                     if (newStartTime >= existingStartTime && newEndTime <= existingEndTime) {
@@ -220,22 +208,22 @@ router.post('/edit-work-hour', async (req, res) => {
                     }
 
                     if (newStartTime < existingStartTime) {
-                        await createSchedule(clientId, [{
+                        await createWorkHour(clientId, [{
                             client_id: clientId,
-                            dayOfWeek: schedule.dayOfWeek,
-                            startTime: schedule.startTime,
-                            endTime: existingSchedule.startTime,
-                            serviceDuration: schedule.serviceDuration
+                            dayOfWeek: workHour.dayOfWeek,
+                            startTime: workHour.startTime,
+                            endTime: existingWorkHour.startTime,
+                            serviceDuration: workHour.serviceDuration
                         }]);
                     }
 
                     if (newEndTime > existingEndTime) {
-                        await createSchedule(clientId, [{
+                        await createWorkHour(clientId, [{
                             client_id: clientId,
-                            dayOfWeek: schedule.dayOfWeek,
-                            startTime: existingSchedule.endTime,
-                            endTime: schedule.endTime,
-                            serviceDuration: schedule.serviceDuration
+                            dayOfWeek: workHour.dayOfWeek,
+                            startTime: existingWorkHour.endTime,
+                            endTime: workHour.endTime,
+                            serviceDuration: workHour.serviceDuration
                         }]);
                     }
 
@@ -246,7 +234,7 @@ router.post('/edit-work-hour', async (req, res) => {
             }
         }
 
-        const result = await updateWorkHour(_id, schedule);
+        const result = await updateWorkHour(_id, workHour);
         req.session.alert = 'alertWorkHourUpdatedSuccessfully';
         res.status(200).json({ "success": result });
     } catch (err) {
@@ -281,10 +269,10 @@ router.post('/edit-service', async (req, res) => {
             serviceName,
             servicePrice
         };
-        const createdSchedules = await updateService(_id, service);
+        const createdWorkHours = await updateService(_id, service);
         req.session.alert = 'alertServiceUpdatedSuccessfully';
 
-        res.status(201).json(createdSchedules);
+        res.status(201).json(createdWorkHours);
     } catch (err) {
         res.status(500).json({ message: (err.message) ? err.message : 'errorMsgSystem' });
     }

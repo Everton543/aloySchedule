@@ -9,9 +9,9 @@ import '@pnotify/core/dist/PNotify.css';
 import '@pnotify/core/dist/BrightTheme.css';
 import '@pnotify/mobile/dist/PNotifyMobile.css';
 
-function ScheduleCard ({ schedule }){
+function WourkHourCard ({ workHour }){
     const { t, i18n} = useTranslation();
-    const { _id, dayOfWeek, startTime, endTime, serviceDuration } = schedule;
+    const { _id, dayOfWeek, startTime, endTime, serviceDuration } = workHour;
     useEffect(() => {
         const searchParams = new URLSearchParams(window.location.search);
         const lang = searchParams.get('lang');
@@ -51,7 +51,7 @@ function ScheduleCard ({ schedule }){
             </div>
             <div className='card-footer'>
                 <a className="me-2" href={`/edit-work-hour/${_id}`}>
-                    <PrimaryButton>{t('btnEditSchedule')}</PrimaryButton>
+                    <PrimaryButton>{t('btnEditWorkHour')}</PrimaryButton>
                 </a>
 
                 <button className='btn btn-danger' onClick={handleDelete}>{t('btnDelete')}</button>
@@ -59,4 +59,4 @@ function ScheduleCard ({ schedule }){
         </div>
     );
 };
-export default ScheduleCard;
+export default WourkHourCard;

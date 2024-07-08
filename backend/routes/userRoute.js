@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { login, getLoggedUserInfo} = require('../modules/userModule');
-const { getClientById, getClientByLink, getClientSchedule } = require('../modules/clientsModule');
+const { login, getLoggedUserInfo, Schedule, getClientSchedules} = require('../modules/userModule');
+const { getClientById, getClientByLink, getClientWorkHour, getClientServiceList } = require('../modules/clientsModule');
 const { t } = require('i18next');
+const {addMinutes, getScheduleDate} = require('../utils/timeUtils')
 
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
@@ -55,8 +56,9 @@ router.get('/take-client-schedule', async (req, res) => {
         if(logedUserInfo != null && client != null){
             dashboardOwner = (logedUserInfo.client_id == client._id && accountType == 'C');
         }
-        let schedule = await getClientSchedule(client._id);
-        res.json({ accountType, logedIn, client, dashboardOwner, logedUserInfo, schedule});
+        let schedule = await getClientWorkHour(client._id);
+        let services = await getClientServiceList(client._id);
+        res.json({ accountType, logedIn, client, dashboardOwner, logedUserInfo, schedule, services});
     } catch (err) {
         if(err.message){
             res.status(500).json({ message: err.message });
@@ -83,4 +85,91 @@ router.get('/get-logged-user-info', async (req, res) => {
         }
     }
 });
+
+router.get('/get-schedule', async (req, res) => {
+    const { clientLink, viewType, start, end } = req.query;
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+
+    try {
+        const client = await getClientByLink(clientLink);
+        let schedule = [];
+        let workHours = await getClientWorkHour(client._id);
+        let existingSchedules = await getClientSchedules(client._id, startDate, endDate);
+
+        workHours.forEach(workHour => {
+            let currentStartTime = workHour.startTime;
+
+            while (true) {
+                const currentEndTime = addMinutes(currentStartTime, workHour.serviceDuration);
+
+                if (currentEndTime > workHour.endTime) break;
+
+                const scheduleDate = getScheduleDate(workHour.dayOfWeek, currentStartTime);
+
+                if (scheduleDate >= startDate && scheduleDate <= endDate) {
+                    let isVacant = true;
+                    
+                    existingSchedules.forEach(existingSchedule => {
+                        const existingScheduleDate = new Date(existingSchedule.date);
+                        const existingScheduleStartTime = existingSchedule.startTime;
+                        const existingScheduleEndTime = addMinutes(existingScheduleStartTime, workHour.serviceDuration);
+
+                        if (
+                            scheduleDate.toISOString().split('T')[0] === existingScheduleDate.toISOString().split('T')[0] &&
+                            ((currentStartTime >= existingScheduleStartTime && currentStartTime < existingScheduleEndTime) ||
+                             (currentEndTime > existingScheduleStartTime && currentEndTime <= existingScheduleEndTime) ||
+                             (currentStartTime <= existingScheduleStartTime && currentEndTime >= existingScheduleEndTime))
+                        ) {
+                            isVacant = false;
+                        }
+                    });
+
+                    schedule.push({
+                        dayOfWeek: workHour.dayOfWeek,
+                        startTime: currentStartTime,
+                        endTime: currentEndTime,
+                        client_id: workHour.client_id,
+                        date: scheduleDate.toISOString().split('T')[0], // Add date to workHour
+                        availability: isVacant ? 'vacant' : 'not vacant'
+                    });
+                }
+
+                currentStartTime = currentEndTime;
+            }
+        });
+
+        res.json(schedule);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: err.message });
+    }
+});
+
+router.post('/add-schedule', async (req, res) => {
+    const { clientLink, dayOfWeek, startTime, endTime, serviceId, date, name, phone, selectedService } = req.body;
+    const client = await getClientByLink(clientLink);
+    console.log(client);
+
+    const newSchedule = new Schedule({
+        client_id : client._id,
+        dayOfWeek,
+        startTime,
+        endTime,
+        serviceId,
+        date,
+        name,
+        phone,
+        selectedService
+    });
+
+    try {
+        const savedSchedule = await newSchedule.save();
+        res.status(201).json(savedSchedule);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
+
+module.exports = router;
 module.exports = router;

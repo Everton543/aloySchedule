@@ -12,6 +12,34 @@ const userSchema = new Schema({
 
 const User = mongoose.model('User', userSchema);
 
+const scheduleSchema = new mongoose.Schema({
+    client_id: { type: mongoose.Schema.Types.ObjectId, ref: 'client', required: true },
+    dayOfWeek: { type: String, required: true, enum: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] },
+    startTime: { type: String, required: true, validate: {
+        validator: function(v) {
+            return /^([01]\d|2[0-3]):([0-5]\d)$/.test(v);
+        },
+        message: props => `${props.value} is not a valid time!`
+    }},
+    endTime: { type: String, required: true, validate: {
+        validator: function(v) {
+            return /^([01]\d|2[0-3]):([0-5]\d)$/.test(v);
+        },
+        message: props => `${props.value} is not a valid time!`
+    }},
+    serviceId: { type: String, required: false},
+    date: { type: Date, required: true },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now }
+}, { collection: 'schedules' });
+
+scheduleSchema.pre('save', function(next) {
+    this.updatedAt = Date.now();
+    next();
+});
+
+const Schedule = mongoose.model('Schedule', scheduleSchema);
+
 const createUser = async (email, password, name, client_id, acccountType) => {
     if (!password) {
         throw new Error('Password is required');
@@ -70,8 +98,17 @@ const getLoggedUserInfo = async (user_id) => {
 
 }
 
+const getClientSchedules = async  (client_id, startDate, endDate) => {
+    return await Schedule.find({
+        client_id: client_id,
+        date: { $gte: startDate, $lte: endDate }
+    });
+}
+
 module.exports = {
     createUser,
     login,
-    getLoggedUserInfo
+    getLoggedUserInfo,
+    Schedule,
+    getClientSchedules
 };
