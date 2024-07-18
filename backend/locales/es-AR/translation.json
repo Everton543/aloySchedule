@@ -1,0 +1,5 @@
+{
+    "messageUserAppointmentMarkedTemplate" : "Has marcado una cita con $CLIENT_NAME el $DATE a las $HOUR. $ADDRESS",
+    "messageClientAppointmentMarkedTemplate" : "El cliente $USER_NAME ha marcado una cita el $DATE a las $HOUR. La información de contacto es: $PHONE",
+    "dateStyle" : "brazilianStyle"
+}

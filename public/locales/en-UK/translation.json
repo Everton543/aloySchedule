@@ -3,11 +3,11 @@
     "welcomeBody": "Welcome to aloySchedule! Our platform is designed to help businesses streamline their appointment scheduling process effortlessly. With aloySchedule, you can:",
     "welcomeList": [
         "Create and Manage Your Account: Set up your business account quickly and easily.",
-        "Configure Your Online Scheduling Site: Customize your scheduling site to fit your business needs and branding.",
+        "Configure Your Online Scheduling Site: Customise your scheduling site to fit your business needs and branding.",
         "Client-Friendly Scheduling: Allow your clients to book appointments online at their convenience.",
         "Automated Notifications: Ensure your clients receive timely reminders and notifications about their appointments."
     ],
-    "welcomeFooter": "aloySchedule is your go-to solution for efficient and organized scheduling, enhancing both your business operations and customer satisfaction. Join us today and experience the convenience of seamless online scheduling!",
+    "welcomeFooter": "aloySchedule is your go-to solution for efficient and organised scheduling, enhancing both your business operations and customer satisfaction. Join us today and experience the convenience of seamless online scheduling!",
 
     "aboutTitle": "About Us",
     "signUpTitle": "Sign Up",
@@ -46,7 +46,7 @@
     "tagService": "Service",
     "tagServicePrice": "Service price",
     "tagOptions": "Options",
-    "tagMoneyicon": "$",
+    "tagMoneyicon": "£",
     "tagVacant": "Add Schedule",
     "tagNotVacant": "No Vacancy",
     "tagAppointments": "Appointments",
@@ -62,7 +62,7 @@
     "countryArgentina": "Argentina",
     "countryParaguay": "Paraguay",
 
-    "maskPhone": "+1 (999) 999-9999",
+    "maskPhone": "+44 9999 999999",
     "emptyOptionSelectClient": "Choose the establishment",
 
     "linkCreateEstablishmentAccount": "Put Your Business Online",
@@ -79,7 +79,7 @@
     "btnEditAccount": "Edit Account",
     "btnListSchedule": "List Schedule",
     "btnEditWorkHour": "Edit Work Hour",
-    "btnCostumerAccess": "I'm a costumer",
+    "btnCostumerAccess": "I'm a customer",
     "btnClientOpenServices": "My services",
     "btnClientOpenWorkHours": "My work hours",
     "btnClientAddWorkHours": "Create Work Hours",
@@ -100,7 +100,7 @@
 
     "errorMsgEmailRequired" : "Email is required",
     "errorMsgEmailAndPasswordRequired" : "Email and password are required.",
-    "errorMsgUserNotFound" : "User not found",
+    "errorMsgUserNotFound": "User not found",
     "errorMsgLinkAlreadyInUse" : "The link is already in use. Please choose a different link.",
     "errorMsgAccountAlreadyInUse" : "This account already exists.",
     "errorMsgSystem" : "Sorry we got an error in the system, please report it.",
@@ -108,7 +108,7 @@
     "errorMsgServiceMustBeUnique" : "You already have a service with this same name",
     "errorMsgLinkMustBeUnique" : "Sorry this link is already taken.",
     "errorMsgPermission" : "You don't have permission to do what you tried to do.",
-    "errorMsgLogin" : "You must login to access this part of the website.",
-    "errorMsgConflictOnWorkHours" : "Error: It already exist a work hour for this same time and day.",
+    "errorMsgLogin" : "You must log in to access this part of the website.",
+    "errorMsgConflictOnWorkHours" : "Error: It already exists a work hour for this same time and day.",
     "errorMsgInvalidPassword" : "Invalid Password"
 }

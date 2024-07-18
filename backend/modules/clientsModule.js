@@ -9,6 +9,9 @@ const clientSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    phone: {type: String},
+    email: {type: String},
+    address: {type: String},
 });
 
 const workHourSchema = new mongoose.Schema({
@@ -72,10 +75,15 @@ const getClientById = async (id) => {
     }
 };
 
-const isClientLinkUnique = async (clientLink) => {
+const isClientLinkUnique = async (clientLink, _id = '') => {
     clientLink = `.${clientLink}`;
     try {
-        const client = await Client.findOne({ clientLink });
+        let client = null;
+        if(_id === ''){
+            client = await Client.findOne({ clientLink});
+        }else{
+            client = await Client.findOne({ clientLink, _id: { $ne: _id } });
+        }
         return client === null;
     } catch (err) {
         throw new Error(`errorMsgSystem`);
@@ -196,6 +204,17 @@ const getClientServiceList = async (client_id) => {
     }
 };
 
+const updateClient = async (_id, client) => {
+    try {
+        const objectId = new mongoose.Types.ObjectId(_id);
+
+        return await Client.updateOne({ _id: objectId }, { $set: client });
+
+    } catch (err) {
+        throw new Error(`errorMsgSystem`);
+    }
+};
+
 const updateService = async (_id, service) => {
     try {
         const objectId = new mongoose.Types.ObjectId(_id);
@@ -244,6 +263,7 @@ module.exports = {
     getClients,
     isClientLinkUnique,
     createClient,
+    updateClient,
     getClientById,
     getClientByLink,
     createWorkHour,

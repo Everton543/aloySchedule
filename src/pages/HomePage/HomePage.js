@@ -6,6 +6,8 @@ import $ from 'jquery';
 import styles from './HomePage.module.css';
 import Logo from '../../components/Logo/Logo'; 
 import NavbarClient from '../../components/Navbar/NavbarClient'; 
+import NavbarUser from '../../components/Navbar/NavbarUser'; 
+import Navbar from '../../components/Navbar/Navbar'; 
 import PrimaryButton from '../../components/Button/PrimaryButton'; 
 import { Link } from 'react-router-dom';
 import FullCalendarComponent from '../../components/FullCalendarComponent/FullCalendarComponent';
@@ -52,7 +54,7 @@ function HomePage() {
                 }
             });
         }
-    }, [clientLink, hasFetched]);
+    }, [clientLink, hasFetched, t]);
 
     const handleBussinessAccountClick = () => {
         window.location.assign('/create-bussiness-account');
@@ -82,13 +84,22 @@ function HomePage() {
             ) : (
                 dashboardOwner ? (
                     <div>
-                        <NavbarClient clientLink={clientLink}></NavbarClient>
+                        <NavbarClient clientLink={clientLink}/>
                         <div id="dashboard-owner-content">
-                            <FullCalendarComponent clientLink={clientLink} locale={locale} services={services}/>
+                            <FullCalendarComponent clientLink={clientLink} locale={locale} services={services} logedIn={logedIn}/>
                         </div>
                     </div>
                 ) : (
-                    <p>{clientLink}</p>
+                    <div>
+                        {(logedIn === true) ? (
+                            <NavbarUser clientLink={clientLink}/>
+                            ) : (
+                            <Navbar />
+                        )}
+                        <div id="dashboard-owner-content">
+                            <FullCalendarComponent clientLink={clientLink} locale={locale} services={services} logedIn={logedIn}/>
+                        </div>
+                    </div>
                 )
             )}
         </main>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import InputMask from 'react-input-mask';
 import { useTranslation } from 'react-i18next';
 import $ from 'jquery';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -8,14 +9,15 @@ import '@pnotify/core/dist/PNotify.css';
 import '@pnotify/core/dist/BrightTheme.css';
 import '@pnotify/mobile/dist/PNotifyMobile.css';
 
-const ScheduleFormModal = ({ isOpen, onRequestClose, hour, date, services, reloadEvents }) => {
-    const [name, setName] = useState('');
-    const [phone, setPhone] = useState('');
-    const [selectedService, setSelectedService] = useState('');
+const ScheduleFormModal = ({ isOpen, onRequestClose, selectedName,selectedPhone, service, hour, date, services, clientLink,logedIn,reloadEvents }) => {
+    const [name, setName] = useState(selectedName);
+    const [phone, setPhone] = useState(selectedPhone);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [selectedService, setSelectedService] = useState(service);
     const { t, i18n } = useTranslation();
 
     useEffect(() => {
-        console.log(services);
         if (isOpen) {
             const searchParams = new URLSearchParams(window.location.search);
             const lang = searchParams.get('lang');
@@ -26,6 +28,9 @@ const ScheduleFormModal = ({ isOpen, onRequestClose, hour, date, services, reloa
         } else {
             document.body.classList.remove('modal-open');
         }
+        setName(selectedName);
+        setPhone(selectedPhone);
+        setSelectedService(service);
 
         return () => {
             document.body.classList.remove('modal-open');
@@ -34,7 +39,21 @@ const ScheduleFormModal = ({ isOpen, onRequestClose, hour, date, services, reloa
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const scheduleData = { clientLink: '.everton', dayOfWeek: new Date(date).toLocaleString('en-US', { weekday: 'long' }).toLowerCase(), startTime: hour, endTime: calculateEndTime(hour), date, name, phone, serviceId: selectedService };
+        const scheduleDate = new Date(date);
+        const dayOfWeek = scheduleDate.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' }).toLowerCase();
+        
+        const scheduleData = {
+            clientLink: clientLink,
+            dayOfWeek: dayOfWeek,
+            startTime: hour,
+            endTime: calculateEndTime(hour),
+            date,
+            name,
+            phone,
+            email,
+            password,
+            serviceId: selectedService
+        };
         try {
             $.ajax({
                 url: '/ajax/user/add-schedule',
@@ -45,6 +64,9 @@ const ScheduleFormModal = ({ isOpen, onRequestClose, hour, date, services, reloa
                         text: t('alertScheduleCreatedSuccessfully'),
                         type: 'success'
                     });
+                    if(!logedIn){
+                        window.location.reload();
+                    }
                     reloadEvents(); // Call the function to reload events
                     onRequestClose();
                 },
@@ -78,34 +100,40 @@ const ScheduleFormModal = ({ isOpen, onRequestClose, hour, date, services, reloa
                     </div>
                     <div className="modal-body">
                         <form onSubmit={handleSubmit}>
-                            <div className="mb-3">
-                                <label className="form-label">Date</label>
-                                <input type="date" className="form-control" value={date} readOnly />
+                            <div className='row'>
+                                <div className="mb-3 col-md-6">
+                                    <label className="form-label">Date</label>
+                                    <input type="date" className="form-control" value={date} readOnly />
+                                </div>
+                                <div className="mb-3 col-md-6">
+                                    <label className="form-label">Hour</label>
+                                    <input type="text" className="form-control" value={hour} readOnly />
+                                </div>
                             </div>
-                            <div className="mb-3">
-                                <label className="form-label">Hour</label>
-                                <input type="text" className="form-control" value={hour} readOnly />
-                            </div>
-                            <div className="mb-3">
-                                <label className="form-label">Name</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    required
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <label className="form-label">Phone</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    value={phone}
-                                    onChange={(e) => setPhone(e.target.value)}
-                                    placeholder="+1 (123) 456-7890"
-                                    required
-                                />
+                            <div className='row'>
+                                <div className="mb-3 col-md-6">
+                                    <label className="form-label">{t('tagName')}</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        id="name"
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-3 col-md-6">
+                                    <label className="form-label">Phone</label>
+                                    <InputMask
+                                        type="text"
+                                        className="form-control"
+                                        value={phone}
+                                        mask={t('maskPhone')}
+                                        onChange={(e) => setPhone(e.target.value)}
+                                        
+                                        required
+                                    />
+                                </div>
                             </div>
                             <div className="mb-3">
                                 <label className="form-label">Service</label>
@@ -122,6 +150,35 @@ const ScheduleFormModal = ({ isOpen, onRequestClose, hour, date, services, reloa
                                     ))}
                                 </select>
                             </div>
+                            {(!logedIn) ? (
+                                <div className="row">
+                                    <div className="mb-3 col-md-6">
+                                        <label className="form-label">{t('tagEmailInput')}</label>
+                                        <input
+                                            type="email"
+                                            className="form-control"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            id="email"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-3 col-md-6">
+                                        <label className="form-label">{t('tagPasswordInput')}</label>
+                                        <input
+                                            type="password"
+                                            className="form-control"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            id="password"
+                                            required
+                                        />
+                                    </div>
+
+                                </div>
+                            ): (
+                                ''
+                            )}
                             <button type="submit" className="btn btn-primary">Submit</button>
                         </form>
                     </div>

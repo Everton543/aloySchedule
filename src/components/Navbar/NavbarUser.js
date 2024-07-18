@@ -10,7 +10,7 @@ import $ from 'jquery';
 import EditUserModal from '../Modals/EditUserModal';
 import SelectLanguageModal from '../Modals/SelectLanguageModal';
 
-function NavbarClient({ clientLink, user_id }) {
+function NavbarUser({ clientLink }) {
     const { t, i18n} = useTranslation();
     const [isEditUserModalOpen, setIsEditUserModalOpen] = useState(false);
     const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
@@ -22,14 +22,14 @@ function NavbarClient({ clientLink, user_id }) {
             i18n.changeLanguage(lang);
         }
     }, [i18n]);
-    
-    const handleOpenModalClick = () => {
+    const handleOpenEditModalClick = () => {
         setIsEditUserModalOpen(true);
     };
 
     const handleOpenLanguageModalClick = () => {
         setIsLanguageModalOpen(true);
     };
+
     return (
         <nav className="navbar navbar-expand-lg bg-body-tertiary">
             <div className="container">
@@ -37,24 +37,15 @@ function NavbarClient({ clientLink, user_id }) {
                     <Logo className={styles.menuLogo}></Logo>
                 </a>
                 <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li className={classNames("nav-item", styles.menuItems)}>
-                        <PrimaryButton className="nav-link"><a href='/list-work-hour'>{t('btnClientOpenWorkHours')}</a></PrimaryButton>
-                    </li>
-                    <li className={classNames("nav-item", styles.menuItems)}>
-                        <PrimaryButton className="nav-link"><a href='/list-service'>{t('btnClientOpenServices')}</a></PrimaryButton>
-                    </li>
-                    <li className={classNames("nav-item", styles.menuItems)}>
-                        <PrimaryButton className="nav-link"><a href='/details'>{t('btnClientOpenContacts')}</a></PrimaryButton>
-                    </li>
                     <li className="nav-item dropdown">
                         <SecondaryButton className="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i className="bi bi-gear-fill"></i>
                         </SecondaryButton>
                         <ul className="dropdown-menu">
-                             <li><a className="dropdown-item" href="#" onClick={handleOpenLanguageModalClick}>{t('btnChooseLanguage')}</a></li>
                             <li><a className="dropdown-item" href="/list-schedule" >{t('btnListSchedule')}</a></li>
+                            <li><a className="dropdown-item" href="#" onClick={handleOpenLanguageModalClick}>{t('btnChooseLanguage')}</a></li>
                             <li><hr className="dropdown-divider"/></li>
-                            <li><a className="dropdown-item" href="#" onClick={handleOpenModalClick}>{t('btnEditAccount')}</a></li>
+                            <li><a className="dropdown-item" href="#" onClick={handleOpenEditModalClick}>{t('btnEditAccount')}</a></li>
                             <li><a className="dropdown-item" href="/logoff">{t('btnLogoff')}</a></li>
                         </ul>
                     </li>
@@ -72,4 +63,4 @@ function NavbarClient({ clientLink, user_id }) {
     );
   }
   
-  export default NavbarClient;
+  export default NavbarUser;

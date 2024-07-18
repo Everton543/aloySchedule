@@ -10,7 +10,9 @@ import WorkHourForm from '../pages/WorkHourForm/WorkHourForm';
 import WorkHourList from '../pages/WorkHourList/WorkHourList';
 import ServiceForm from '../pages/ServiceForm/ServiceForm';
 import ServiceList from '../pages/ServiceList/ServiceList';
-
+import ClientDetailsForm from '../pages/ClientDetailsForm/ClientDetailsForm';
+import Logoff from '../pages/Logoff';
+import SchedulesList from '../pages/SchedulesList/SchedulesList';
 function AppRoutes() {
   return (
     <Router>
@@ -20,10 +22,13 @@ function AppRoutes() {
         <Route path="/create-bussiness-account" element={<CreateEstablishmentAccount />} />
         <Route path="/singup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/logoff" element={<Logoff />} />
+        <Route path="/details" element={<ClientDetailsForm />} />
         <Route path='/save-work-hour' element={<WorkHourForm/>} />
         <Route path='/edit-work-hour/:id?' element={<WorkHourForm/>} />
         <Route path='/list-work-hour' element={<WorkHourList/>} />
         <Route path='/list-service' element={<ServiceList/>} />
+        <Route path='/list-schedule' element={<SchedulesList/>} />
         <Route path='/save-service' element={<ServiceForm/>} />
         <Route path='/edit-service/:id' element={<ServiceForm/>} />
         <Route path="*" element={<NotFoundPage />} />

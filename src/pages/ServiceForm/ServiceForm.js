@@ -53,7 +53,6 @@ const ServiceForm = () => {
                     method: 'GET',
                     data: { "_id": id },
                     success: function(response) {
-                        console.log(response);
                         setServicePrice(response.servicePrice);
                         setServiceName(response.serviceName);
                         setLoading(false);

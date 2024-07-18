@@ -3,6 +3,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import listPlugin from '@fullcalendar/list';
 import allLocales from '@fullcalendar/core/locales-all';
 import $ from 'jquery';
 import style from './FullCalendarComponent.module.css';
@@ -10,7 +11,7 @@ import HourListModal from '../Modals/HourListModal';
 import ScheduleFormModal from '../Modals/ScheduleFormModal';
 import { useTranslation } from 'react-i18next';
 
-const FullCalendarComponent = ({ clientLink, locale, services }) => {
+const FullCalendarComponent = ({ clientLink, locale, services, logedIn }) => {
     const { t, i18n } = useTranslation();
     const [events, setEvents] = useState([]);
     const [schedules, setSchedules] = useState([]);
@@ -19,6 +20,9 @@ const FullCalendarComponent = ({ clientLink, locale, services }) => {
     const [isScheduleFormModalOpen, setScheduleFormModalOpen] = useState(false);
     const [selectedHour, setSelectedHour] = useState('');
     const [selectedDate, setSelectedDate] = useState('');
+    const [selectedName, setSelectedName] = useState('');
+    const [selectedPhone, setSelectedPhone] = useState('');
+    const [selectedService, setSelectedService] = useState('');
     const calendarRef = useRef(null);
 
     useEffect(() => {
@@ -37,8 +41,8 @@ const FullCalendarComponent = ({ clientLink, locale, services }) => {
                 method: 'GET',
                 data: { clientLink, viewType, start, end },
                 success: (data) => {
-                    setSchedules(data);
-    
+                    setSchedules(data.schedule);
+                    setSelectedName(data.currentUserName);
                     const daysOfWeekMap = {
                         'monday': 1,
                         'tuesday': 2,
@@ -52,18 +56,32 @@ const FullCalendarComponent = ({ clientLink, locale, services }) => {
                     if (viewType === 'timeGridWeek') {
                         const hourlyStatus = {};
     
-                        data.forEach(schedule => {
-                            const startTime = schedule.startTime.split(':');
-                            const endTime = schedule.endTime.split(':');
-                            const startHour = parseInt(startTime[0], 10);
-                            const endHour = parseInt(endTime[0], 10);
-    
-                            for (let hour = startHour; hour < endHour; hour++) {
-                                const key = `${schedule.date}_${hour}`;
+                        data.schedule.forEach(schedule => {
+                            const [startHour, startMinute] = schedule.startTime.split(':').map(Number);
+                            const [endHour, endMinute] = schedule.endTime.split(':').map(Number);
+                            const date = schedule.date;
+                        
+                            if (startHour === endHour && startMinute <= endMinute) {
+                                const key = `${date}_${startHour}`;
                                 if (!hourlyStatus[key]) {
                                     hourlyStatus[key] = [];
                                 }
                                 hourlyStatus[key].push(schedule.availability);
+                            } else {
+                                for (let hour = startHour; hour < endHour; hour++) {
+                                    const key = `${date}_${hour}`;
+                                    if (!hourlyStatus[key]) {
+                                        hourlyStatus[key] = [];
+                                    }
+                                    
+                                    if (hour === startHour && startMinute > 0) {
+                                        hourlyStatus[key].push(schedule.availability);
+                                    } else if (hour === endHour && endMinute < 60) {
+                                        hourlyStatus[key].push(schedule.availability);
+                                    }else if (hour !== startHour && hour !== endHour) {
+                                        hourlyStatus[key].push(schedule.availability);
+                                    }
+                                }
                             }
                         });
     
@@ -81,9 +99,9 @@ const FullCalendarComponent = ({ clientLink, locale, services }) => {
     
                         setEvents(events);
     
-                    } else if (viewType === 'timeGridDay') {
-                        const events = data.map(schedule => ({
-                            title: schedule.availability === 'not vacant' ? 'Not Vacant' : 'Vacant',
+                    } else if (viewType === 'listDay') {
+                        const events = data.schedule.map(schedule => ({
+                            title: schedule.availability === 'not vacant' ? 'tagNotVacant' : 'tagVacant',
                             start: `${schedule.date}T${schedule.startTime}:00`,
                             end: `${schedule.date}T${schedule.endTime}:00`,
                             allDay: false
@@ -94,7 +112,7 @@ const FullCalendarComponent = ({ clientLink, locale, services }) => {
                     } else if (viewType === 'dayGridMonth') {
                         const dailyStatus = {};
     
-                        data.forEach(schedule => {
+                        data.schedule.forEach(schedule => {
                             const date = schedule.date;
                             if (!dailyStatus[date]) {
                                 dailyStatus[date] = { total: 0, notVacant: 0 };
@@ -107,7 +125,7 @@ const FullCalendarComponent = ({ clientLink, locale, services }) => {
     
                         const events = Object.entries(dailyStatus).map(([date, { total, notVacant }]) => {
                             const backgroundColor = notVacant === total ? 'gray' : (notVacant === 0 ? 'green' : 'white');
-                            const title = notVacant > 0 ? `Not Vacant: ${notVacant}` : 'Vacant';
+                            const title = notVacant > 0 ? `${t('tagAppointments')}: ${notVacant}` : 'Vacant';
     
                             return {
                                 title: title,
@@ -151,8 +169,6 @@ const FullCalendarComponent = ({ clientLink, locale, services }) => {
 
         const schedulesInHour = schedules.filter(schedule => {
             const scheduleDay = daysOfWeekMap[schedule.dayOfWeek];
-
-            // Convert start and end times to Date objects for comparison
             const scheduleStart = new Date(`1970-01-01T${schedule.startTime}:00`);
             const scheduleEnd = new Date(`1970-01-01T${schedule.endTime}:00`);
             const filterStart = new Date(`1970-01-01T${String(startHour).padStart(2, '0')}:00:00`);
@@ -169,6 +185,8 @@ const FullCalendarComponent = ({ clientLink, locale, services }) => {
     };
 
     const handleHourClick = (schedule) => {
+        setSelectedPhone('');
+        setSelectedService('');
         setSelectedHour(schedule.startTime);
         setSelectedDate(schedule.date);
         setHourListModalOpen(false);
@@ -204,6 +222,16 @@ const FullCalendarComponent = ({ clientLink, locale, services }) => {
         );
     };
 
+    const renderEventContentMonth = (eventInfo) => {
+        const eventTitle = eventInfo.event.title;
+
+        return (
+            <div className={style.event_content}>
+                <span>{eventTitle}</span>
+            </div>
+        );
+    };
+
     const reloadEvents = () => {
         const calendarApi = calendarRef.current.getApi();
         const viewType = calendarApi.view.type;
@@ -212,17 +240,50 @@ const FullCalendarComponent = ({ clientLink, locale, services }) => {
         fetchSchedules(viewType, start, end);
     };
 
+    const renderEventDay = (eventInfo) => {
+        const eventTitle = eventInfo.event.title;
+        const localStartTime = eventInfo.event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+        const localDate = eventInfo.event.start.toISOString().split('T')[0];
+        const isNotVacant = eventTitle === 'tagNotVacant' || eventTitle.startsWith('Not Vacant');
+        return (
+            <div className={style.event_content}>
+                <button
+                    className={`btn ${isNotVacant ? 'btn-secondary' : 'btn-primary'}`}
+                    onClick={isNotVacant ? null : () => handleHourClick({
+                        startTime: localStartTime,
+                        date: localDate
+                    })}
+                >
+                    {t(eventTitle)}
+                </button>
+            </div>
+        );
+    };
+
+    const renderEvent = (eventInfo) => {
+        const viewType = calendarRef.current.getApi().view.type;
+        return viewType === 'dayGridMonth' ? renderEventContentMonth(eventInfo) : viewType === 'listDay' ? renderEventDay(eventInfo) : renderEventContent(eventInfo);
+    };
+
+    const handleDateClick = (info) => {
+        const calendarApi = calendarRef.current.getApi();
+        calendarApi.changeView('listDay', info.dateStr);
+    };
+
     return (
         <div>
             <FullCalendar
-                plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
                 initialView="timeGridWeek"
                 headerToolbar={{
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    right: 'dayGridMonth,timeGridWeek,listDay'
                 }}
                 views={{
+                    listDay: {
+                        buttonText: t('tagDay')
+                    },
                     timeGridWeek: {
                         allDaySlot: false
                     }
@@ -241,9 +302,10 @@ const FullCalendarComponent = ({ clientLink, locale, services }) => {
                     hour12: false
                 }}
                 height="auto"
-                eventContent={renderEventContent}
+                eventContent={renderEvent}
                 datesSet={handleDatesSet}
                 ref={calendarRef}
+                dateClick={handleDateClick}
             />
             <HourListModal
                 isOpen={isHourListModalOpen}
@@ -254,9 +316,14 @@ const FullCalendarComponent = ({ clientLink, locale, services }) => {
             <ScheduleFormModal
                 isOpen={isScheduleFormModalOpen}
                 onRequestClose={() => setScheduleFormModalOpen(false)}
+                selectedName={selectedName}
+                selectedPhone={selectedPhone}
+                service={selectedService}
                 hour={selectedHour}
                 date={selectedDate}
                 services={services}
+                logedIn={logedIn}
+                clientLink={clientLink}
                 reloadEvents={reloadEvents} // Pass the function to the modal
             />
         </div>

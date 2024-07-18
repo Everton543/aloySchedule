@@ -8,11 +8,13 @@ const path = require('path');
 const zapiRoutes = require('./routes/zapiRoutes');
 const clientsRoute = require('./routes/clientsRoute');
 const userRoute = require('./routes/userRoute');
+const i18n = require('./i18n'); 
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
+app.use(i18n.middleware.handle(i18n));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../build')));

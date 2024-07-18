@@ -25,22 +25,48 @@ function getDayOfWeekIndex(dayOfWeek) {
     return days[dayOfWeek.toLowerCase()];
 }
 
-function getScheduleDate(dayOfWeek, time) {
-    // Function to calculate the date of the schedule based on the day of the week and time
-    const today = new Date();
-    const todayDayOfWeek = today.getDay();
+// function getDayOfWeekIndex(dayOfWeek) {
+//     const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+//     return days.indexOf(dayOfWeek);
+// }
+
+function getScheduleDate(dayOfWeek, time, dateStart, dateEnd) {
+    const start = new Date(dateStart);
+    const end = new Date(dateEnd);
     const targetDayOfWeek = getDayOfWeekIndex(dayOfWeek);
-    let daysUntilTarget = targetDayOfWeek - todayDayOfWeek;
+
+    // Find the first occurrence of the target day of the week within the range
+    const startDayOfWeek = start.getDay();
+    let daysUntilTarget = targetDayOfWeek - startDayOfWeek;
 
     if (daysUntilTarget < 0) {
         daysUntilTarget += 7;
     }
 
-    const scheduleDate = new Date(today);
-    scheduleDate.setDate(today.getDate() + daysUntilTarget);
+    const scheduleDate = new Date(start);
+    scheduleDate.setDate(start.getDate() + daysUntilTarget);
     scheduleDate.setHours(parseInt(time.split(':')[0]), parseInt(time.split(':')[1]), 0, 0);
 
-    return scheduleDate;
+    if (scheduleDate >= start && scheduleDate <= end) {
+        return scheduleDate;
+    } else {
+        // Calculate the next occurrence within the range
+        scheduleDate.setDate(scheduleDate.getDate() + 7);
+        if (scheduleDate >= start && scheduleDate <= end) {
+            return scheduleDate;
+        } else {
+            return null; // No valid schedule date within the range
+        }
+    }
 }
 
-module.exports = { addMinutes, getScheduleDate, getDayOfWeekIndex };
+function formatDate(dateString, style) {
+    const [year, month, day] = dateString.split('-');
+    if(style == "brazilianStyle"){
+        return `${day}/${month}/${year}`;
+    }else{
+        return `${month}/${day}/${year}`;
+    }
+  }
+
+module.exports = { addMinutes, getScheduleDate, getDayOfWeekIndex, formatDate };

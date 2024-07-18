@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getClients, isClientLinkUnique, createClient, getClientById, createWorkHour, getClientWorkHour, getClientByLink, getWorkHourById, getClientWorkHours, updateWorkHour, deleteWorkHour, createService, getClientServiceList, checkServiceUniqueness, updateService, deleteService, getServiceById} = require('../modules/clientsModule');
+const { getClients, isClientLinkUnique, createClient, getClientById, createWorkHour, getClientWorkHour, getClientByLink, getWorkHourById, getClientWorkHours, updateWorkHour, deleteWorkHour, createService, getClientServiceList, checkServiceUniqueness, updateService, deleteService, getServiceById, updateClient} = require('../modules/clientsModule');
 
 router.get('/', async (req, res) => {
     try {
@@ -12,11 +12,13 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/client/:id', async (req, res) => {
-    const clientId = req.params.id;
+    let clientId = req.params.id;
 
     try {
+        if(clientId == 0){
+            clientId = req.session.user.client_id;
+        }
         const client = await getClientById(clientId);
-
         if (!client) {
             return res.status(404).json({ message: 'Client not found' });
         }
@@ -35,7 +37,7 @@ router.get('/check-link', async (req, res) => {
     }
 
     try {
-        const isUnique = await isClientLinkUnique(clientLink);
+        const isUnique = await isClientLinkUnique(clientLink, '');
         if (isUnique) {
             req.session.clientLink = '.' + clientLink;
         }
@@ -273,6 +275,46 @@ router.post('/edit-service', async (req, res) => {
         req.session.alert = 'alertServiceUpdatedSuccessfully';
 
         res.status(201).json(createdWorkHours);
+    } catch (err) {
+        res.status(500).json({ message: (err.message) ? err.message : 'errorMsgSystem' });
+    }
+});
+
+router.post('/edit-client', async (req, res) => {
+    let client_id = '';
+    let accountType = '';
+    if (req.session && req.session.user) {
+        client_id = req.session.user.client_id;
+        accountType = req.session.user.accountType;
+    }
+    
+    if (accountType !== 'C') {
+        return res.status(403).json({ message: 'errorMsgPermission' });
+    }
+
+    if (!client_id) {
+        return res.status(401).json({ message: 'errorMsgLogin' });
+    }
+
+    let { clientName, address, email, phone, clientLink } = req.body;
+    try {
+        const isClientLinkUniqueResult  = await isClientLinkUnique(clientLink, client_id);
+        if (!isClientLinkUniqueResult ) {
+            return res.status(500).json({ message: 'errorMsgLinkMustBeUnique' });
+        }
+        clientLink = `.${clientLink}`;
+        const client = {
+            clientName,
+            address,
+            email,
+            phone,
+            clientLink
+        };
+        const clientUpdated = await updateClient(client_id, client);
+        req.session.alert = 'alertServiceUpdatedSuccessfully';
+        req.session.user.clientLink = clientLink;
+
+        res.status(201).json(clientUpdated);
     } catch (err) {
         res.status(500).json({ message: (err.message) ? err.message : 'errorMsgSystem' });
     }

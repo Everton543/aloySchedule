@@ -28,7 +28,7 @@ function SignUp() {
 
         if (!email || !password) {
             PNotifyAlert({
-                text: 'Email and password are required.',
+                text: t('errorMsgEmailAndPasswordRequired'),
                 type: 'error'
             });
             return;
@@ -42,14 +42,14 @@ function SignUp() {
                     window.location.href = response.returnPage;
                 } else {
                     PNotifyAlert({
-                        text: 'This account already exists.',
+                        text: t('errorMsgAccountAlreadyInUse'),
                         type: 'error'
                     });
                 }
             },
-            error: function(jqXHR, textStatus, errorThrown) {
+            error: function(error) {
                 PNotifyAlert({
-                    text: 'Error at sign up: ' + errorThrown,
+                    text: t(error.responseJSON.message || 'errorMsgSystem'),
                     type: 'error'
                 });
             }

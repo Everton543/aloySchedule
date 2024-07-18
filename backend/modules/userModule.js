@@ -14,6 +14,7 @@ const User = mongoose.model('User', userSchema);
 
 const scheduleSchema = new mongoose.Schema({
     client_id: { type: mongoose.Schema.Types.ObjectId, ref: 'client', required: true },
+    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'users', required: true },
     dayOfWeek: { type: String, required: true, enum: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] },
     startTime: { type: String, required: true, validate: {
         validator: function(v) {
@@ -47,10 +48,27 @@ const createUser = async (email, password, name, client_id, acccountType) => {
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({ name, email, password: hashedPassword, client_id, acccountType });
-        await newUser.save();
-        return true; 
+        return await newUser.save();
     } catch (err) {
-        throw new Error(`Unable to save user: ${err.message}`);
+        throw new Error(`${err.message}`);
+    }
+};
+
+const updatePassword = async (userId, newPassword) => {
+    if (!newPassword) {
+        throw new Error('errorMsgPasswordRequired');
+    }
+    try {
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        const user = await User.findById(userId);
+        if (!user) {
+            throw new Error('errorMsgUserNotFound');
+        }
+        user.password = hashedPassword;
+        await user.save();
+        return true;
+    } catch (err) {
+        throw new Error(`${err.message}`);
     }
 };
 
@@ -98,17 +116,194 @@ const getLoggedUserInfo = async (user_id) => {
 
 }
 
-const getClientSchedules = async  (client_id, startDate, endDate) => {
-    return await Schedule.find({
-        client_id: client_id,
-        date: { $gte: startDate, $lte: endDate }
-    });
+const getClientSchedules = async (client_id, startDate, endDate) => {
+    startDate.setUTCHours(0, 0, 0, 0);
+    if (startDate.toISOString().split('T')[0] === endDate.toISOString().split('T')[0]) {
+        endDate.setUTCHours(23, 59, 59, 999);
+    }
+    const client_id_objectId = new mongoose.Types.ObjectId(client_id);
+
+    const schedules = await Schedule.aggregate([
+        {
+            $match: {
+                client_id: client_id_objectId,
+                date: { $gte: startDate, $lte: endDate }
+            }
+        },
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'user_id',
+                foreignField: '_id',
+                as: 'user'
+            }
+        },
+        {
+            $unwind: '$user'
+        },
+        {
+            $addFields: {
+                serviceObjectId: {
+                    $cond: {
+                        if: { $and: [{ $gt: [{ $strLenCP: '$serviceId' }, 0] }, { $eq: [{ $strLenCP: '$serviceId' }, 24] }] },
+                        then: { $toObjectId: '$serviceId' },
+                        else: null
+                    }
+                }
+            }
+        },
+        {
+            $lookup: {
+                from: 'services',
+                localField: 'serviceObjectId',
+                foreignField: '_id',
+                as: 'service'
+            }
+        },
+        {
+            $unwind: {
+                path: '$service',
+                preserveNullAndEmptyArrays: true
+            }
+        },
+        {
+            $addFields: {
+                userName: '$user.name',
+                serviceName: { $ifNull: ['$service.serviceName', ''] }
+            }
+        },
+        {
+            $project: {
+                _id: 1,
+                client_id: 1,
+                user_id: 1,
+                dayOfWeek: 1,
+                startTime: 1,
+                endTime: 1,
+                serviceId: 1,
+                date: 1,
+                createdAt: 1,
+                updatedAt: 1,
+                userName: 1,
+                serviceName: 1
+            }
+        }
+    ]);
+
+    return schedules;
 }
+
+const getUserSchedules = async  (user_id, startDate, endDate) => {
+    startDate.setUTCHours(0, 0, 0, 0);
+    if (startDate.toISOString().split('T')[0] === endDate.toISOString().split('T')[0]) {
+        endDate.setUTCHours(23, 59, 59, 999);
+    }
+    const user_id_objectId = new mongoose.Types.ObjectId(user_id);
+
+    const schedules = await Schedule.aggregate([
+        {
+            $match: {
+                user_id: user_id_objectId,
+                date: { $gte: startDate, $lte: endDate }
+            }
+        },
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'user_id',
+                foreignField: '_id',
+                as: 'user'
+            }
+        },
+        {
+            $unwind: '$user'
+        },
+        {
+            $addFields: {
+                serviceObjectId: {
+                    $cond: {
+                        if: { $and: [{ $gt: [{ $strLenCP: '$serviceId' }, 0] }, { $eq: [{ $strLenCP: '$serviceId' }, 24] }] },
+                        then: { $toObjectId: '$serviceId' },
+                        else: null
+                    }
+                }
+            }
+        },
+        {
+            $lookup: {
+                from: 'services',
+                localField: 'serviceObjectId',
+                foreignField: '_id',
+                as: 'service'
+            }
+        },
+        {
+            $unwind: {
+                path: '$service',
+                preserveNullAndEmptyArrays: true
+            }
+        },
+        {
+            $addFields: {
+                userName: '$user.name',
+                serviceName: { $ifNull: ['$service.serviceName', ''] }
+            }
+        },
+        {
+            $project: {
+                _id: 1,
+                client_id: 1,
+                user_id: 1,
+                dayOfWeek: 1,
+                startTime: 1,
+                endTime: 1,
+                serviceId: 1,
+                date: 1,
+                createdAt: 1,
+                updatedAt: 1,
+                userName: 1,
+                serviceName: 1
+            }
+        }
+    ]);
+
+    return schedules;
+}
+
+const deleteSchedule = async (_id) => {
+    try {
+        const objectId = new mongoose.Types.ObjectId(_id);
+
+        return await Schedule.deleteOne({ _id: objectId });
+
+    } catch (err) {
+        throw new Error(`errorMsgSystem`);
+    }
+};
+
+const updateUserName = async (userId, name) => {
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            throw new Error('errorMsgUserNotFound');
+        }
+        user.name = name;
+        await user.save();
+        return true;
+
+    } catch (err) {
+        throw new Error(`errorMsgSystem`);
+    }
+};
 
 module.exports = {
     createUser,
     login,
     getLoggedUserInfo,
     Schedule,
-    getClientSchedules
+    getClientSchedules,
+    updatePassword,
+    getUserSchedules,
+    deleteSchedule,
+    updateUserName
 };

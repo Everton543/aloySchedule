@@ -35,14 +35,14 @@ function CreateEstablishmentAccount() {
                     window.location.href = '/singup';
                 } else {
                     PNotifyAlert({
-                        text: 'The link is already in use. Please choose a different link.',
+                        text: t('errorMsgLinkAlreadyInUse'),
                         type: 'error'
                     });
                 }
             },
-            error: function(jqXHR, textStatus, errorThrown) {
+            error: function(error) {
                 PNotifyAlert({
-                    text: 'Error checking the link: ' + errorThrown,
+                    text: t(error.responseJSON.message || 'errorMsgSystem'),
                     type: 'error'
                 });
             }

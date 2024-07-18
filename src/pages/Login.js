@@ -3,6 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate  } from 'react-router-dom';
 import Navbar from '../components/Navbar/Navbar';
 import $ from 'jquery';
+import { alert as PNotifyAlert } from '@pnotify/core';
+import '@pnotify/core/dist/PNotify.css';
+import '@pnotify/core/dist/BrightTheme.css';
+import '@pnotify/mobile/dist/PNotifyMobile.css';
 
 const Login = () => {
     const { clientName } = useParams();
@@ -24,9 +28,12 @@ const Login = () => {
             success: (data) => {
                 setClients(data);
             },
-            error: (error) => {
-              console.error('Error fetching clients:', error);
-            },
+            error: function(error) {
+                PNotifyAlert({
+                    text: t(error.responseJSON.message || 'errorMsgSystem'),
+                    type: 'error'
+                });
+            }
         });
     }, []);
 
