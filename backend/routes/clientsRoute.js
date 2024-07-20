@@ -76,7 +76,6 @@ router.post('/save-workHour', async (req, res) => {
     }
 
     const { workHours } = req.body;
-
     try {
         const newWorkHours = workHours.map(workHour => ({
             client_id,

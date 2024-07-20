@@ -52,23 +52,23 @@ const SelectLanguageModal = ({ isOpen, onRequestClose }) => {
                     </div>
                     <div className="modal-body">
                         <div className="row mb-3">
-                            <div className="col-md-3">
+                            <div className="col-md-4">
                                 <LanguageLink lang="en-US" country={t('countryUsa')} flagClass="flag-icon-us" />
                             </div>
-                            <div className="col-md-3">
+                            <div className="col-md-4">
                                 <LanguageLink lang="en-UK" country={t('countryUk')} flagClass="flag-icon-gb" />
                             </div>
-                            <div className="col-md-3">
+                            <div className="col-md-4">
                                 <LanguageLink lang="pt-BR" country={t('countryBrazil')} flagClass="flag-icon-br" />
                             </div>
-                            <div className="col-md-3">
+                            <div className="col-md-4">
                                 <LanguageLink lang="es-PY" country={t('countryParaguay')} flagClass="flag-icon-py" />
                             </div>
-                            <div className="col-md-3">
+                            <div className="col-md-4">
                                 <LanguageLink lang="es-AR" country={t('countryArgentina')} flagClass="flag-icon-ar" />
                             </div>
 
-                            <div className="col-md-3">
+                            <div className="col-md-4">
                                 <LanguageLink lang="es-ES" country={t('countrySpain')} flagClass="flag-icon-es" />
                             </div>
                         </div>

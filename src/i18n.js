@@ -8,7 +8,7 @@ i18n
     .use(LanguageDetector)
     .use(initReactI18next)
     .init({
-        fallbackLng: 'eng',
+        fallbackLng: 'pt-BR',
         debug: true,
         detection: {
             order: ['queryString', 'localStorage', 'navigator'],

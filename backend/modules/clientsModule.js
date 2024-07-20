@@ -17,18 +17,26 @@ const clientSchema = new mongoose.Schema({
 const workHourSchema = new mongoose.Schema({
     client_id: { type: mongoose.Schema.Types.ObjectId, ref: 'client', required: true },
     dayOfWeek: { type: String, required: true, enum: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] },
-    startTime: { type: String, required: true, validate: {
-        validator: function(v) {
-            return /^([01]\d|2[0-3]):([0-5]\d)$/.test(v);
-        },
-        message: props => `${props.value} is not a valid time!`
-    }}, // Store time in HH:mm format
-    endTime: { type: String, required: true, validate: {
-        validator: function(v) {
-            return /^([01]\d|2[0-3]):([0-5]\d)$/.test(v);
-        },
-        message: props => `${props.value} is not a valid time!`
-    }}, // Store time in HH:mm format
+    startTime: { 
+        type: String, 
+        required: true, 
+        validate: {
+            validator: function(v) {
+                return /^([01]\d|2[0-3]):([0-5]\d)$/.test(v);
+            },
+            message: props => `${props.value} is not a valid time!`
+        } 
+    }, // Store time in HH:mm format
+    endTime: { 
+        type: String, 
+        required: true, 
+        validate: {
+            validator: function(v) {
+                return /^([01]\d|2[0-3]):([0-5]\d)$/.test(v);
+            },
+            message: props => `${props.value} is not a valid time!`
+        } 
+    }, // Store time in HH:mm format
     serviceDuration: { type: Number, required: true, min: 10 },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }

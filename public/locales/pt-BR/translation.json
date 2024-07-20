@@ -21,6 +21,7 @@
     "chooseAnHourTitle": "Escolher um Horário",
     "serviceTitle": "Serviço",
     "scheduleListTitle": "Lista de Agendamentos",
+    "scheduleTitle": "Agendar",
     "createWorkHourTitle": "Criar Horário de Trabalho",
     "createServiceTitle": "Criar Serviço",
     "establishmentInfoTitle": "Informações do Estabelecimento",
@@ -47,7 +48,7 @@
     "tagServicePrice": "Preço do serviço",
     "tagOptions": "Opções",
     "tagMoneyicon": "$",
-    "tagVacant": "Adicionar Agendamento",
+    "tagVacant": "Agendar",
     "tagNotVacant": "Sem Vagas",
     "tagAppointments": "Compromissos",
     "tagWhatsApp": "Telefone WhatsApp",
@@ -64,6 +65,7 @@
 
     "maskPhone": "+55 (99) 99999-9999",
     "emptyOptionSelectClient": "Escolha o estabelecimento",
+    "emptyOptionSelectService": "Escolha um serviço",
 
     "linkCreateEstablishmentAccount": "Coloque Seu Negócio Online",
     "btnLogin": "Entrar",

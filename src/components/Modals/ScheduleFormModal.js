@@ -95,18 +95,18 @@ const ScheduleFormModal = ({ isOpen, onRequestClose, selectedName,selectedPhone,
             <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title">Schedule</h5>
+                        <h5 className="modal-title">{t('scheduleTitle')}</h5>
                         <button type="button" className="btn-close" aria-label="Close" onClick={onRequestClose}></button>
                     </div>
                     <div className="modal-body">
                         <form onSubmit={handleSubmit}>
                             <div className='row'>
                                 <div className="mb-3 col-md-6">
-                                    <label className="form-label">Date</label>
+                                    <label className="form-label">{t('tagDate')}</label>
                                     <input type="date" className="form-control" value={date} readOnly />
                                 </div>
                                 <div className="mb-3 col-md-6">
-                                    <label className="form-label">Hour</label>
+                                    <label className="form-label">{t('tagHour')}</label>
                                     <input type="text" className="form-control" value={hour} readOnly />
                                 </div>
                             </div>
@@ -123,7 +123,7 @@ const ScheduleFormModal = ({ isOpen, onRequestClose, selectedName,selectedPhone,
                                     />
                                 </div>
                                 <div className="mb-3 col-md-6">
-                                    <label className="form-label">Phone</label>
+                                    <label className="form-label">{t('tagWhatsApp')}</label>
                                     <InputMask
                                         type="text"
                                         className="form-control"
@@ -136,13 +136,13 @@ const ScheduleFormModal = ({ isOpen, onRequestClose, selectedName,selectedPhone,
                                 </div>
                             </div>
                             <div className="mb-3">
-                                <label className="form-label">Service</label>
+                                <label className="form-label">{t('tagService')}</label>
                                 <select
                                     className="form-select"
                                     value={selectedService}
                                     onChange={(e) => setSelectedService(e.target.value)}
                                 >
-                                    <option value="">Select a service</option>
+                                    <option value="">{t('emptyOptionSelectService')}</option>
                                     {services.map((service, index) => (
                                         <option key={index} value={service._id}>
                                             {`${service.serviceName} - ${t('tagMoneyicon')}${service.servicePrice}`}
@@ -179,11 +179,11 @@ const ScheduleFormModal = ({ isOpen, onRequestClose, selectedName,selectedPhone,
                             ): (
                                 ''
                             )}
-                            <button type="submit" className="btn btn-primary">Submit</button>
+                            <button type="submit" className="btn btn-primary">{t('btnConfirm')}</button>
                         </form>
                     </div>
                     <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" onClick={onRequestClose}>Close</button>
+                        <button type="button" className="btn btn-secondary" onClick={onRequestClose}>{t('btnClose')}</button>
                     </div>
                 </div>
             </div>

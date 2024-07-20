@@ -21,6 +21,7 @@
     "chooseAnHourTitle": "Elegir una Hora",
     "serviceTitle": "Servicio",
     "scheduleListTitle": "Lista de Agendas",
+    "scheduleTitle": "Agenda",
     "createWorkHourTitle": "Crear Horario de Trabajo",
     "createServiceTitle": "Crear Servicio",
     "establishmentInfoTitle": "Información del Establecimiento",
@@ -64,6 +65,7 @@
 
     "maskPhone": "+34 999 99 99 99",
     "emptyOptionSelectClient": "Elige el establecimiento",
+    "emptyOptionSelectService": "Elige el servicio",
 
     "linkCreateEstablishmentAccount": "Poner tu Negocio en Línea",
     "btnLogin": "Iniciar sesión",

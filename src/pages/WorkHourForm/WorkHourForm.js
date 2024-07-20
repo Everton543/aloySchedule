@@ -15,8 +15,8 @@ const WorkHourForm = () => {
     const { id } = useParams();
     const { t, i18n } = useTranslation();
     const [selectedDays, setSelectedDays] = useState([]);
-    const [startTime, setStartTime] = useState('');
-    const [endTime, setEndTime] = useState('');
+    const [startTime, setStartTime] = useState('00:00');
+    const [endTime, setEndTime] = useState('00:00');
     const [serviceDuration, setServiceDuration] = useState('');
     const [loading, setLoading] = useState(true);
     const [hasFetched, setHasFetched] = useState(false);

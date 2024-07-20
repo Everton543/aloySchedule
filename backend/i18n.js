@@ -6,7 +6,7 @@ i18n
   .use(Backend)
   .use(middleware.LanguageDetector)
   .init({
-    fallbackLng: 'eng',
+    fallbackLng: 'pt-BR',
     debug: true,
     backend: {
       loadPath: './locales/{{lng}}/{{ns}}.json'
